@@ -70,10 +70,5 @@ repos:
         additional_dependencies: [mdformat-myst, mdformat-ruff]
         args: [--wrap, '88']
         files: (docs/.)
-  - repo: https://github.com/codespell-project/codespell
-    rev: v2.3.0
-    hooks:
-      - id: codespell
-        args: [--skip="**.ipynb", --ignore-words=.codespell-wordlist.txt]
 ci:
   autoupdate_schedule: monthly
