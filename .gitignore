@@ -1,0 +1,25 @@
+# python
+*.egg-info
+*_version.py
+*.pyc
+*__pycache__
+.mypy_cache
+
+# pytask
+.pytask.sqlite3
+.pytask
+# pixi environments
+.pixi
+*.egg-info
+
+# pytask
+.pytask
+
+#MacOS
+.DS_Store
+
+#VSCode
+.vscode/
+
+# ignore data directory
+data/
