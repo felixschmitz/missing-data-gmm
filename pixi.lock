@@ -11019,9 +11019,9 @@ packages:
   timestamp: 1704317789138
 - kind: pypi
   name: missing-data-gmm
-  version: 0.1.dev1+g57e08af.d20241027
+  version: 0.1.dev3+g14d0c42.d20241027
   path: .
-  sha256: 5f3f94c1c672fc7c434ab5f2a100fc94ada7f66a442cd0bbb0cbc2848109983c
+  sha256: a944cb7350fad194b43b595b5db6227cdf3e2f77c27da57cfff844e60bc4c577
   requires_dist:
   - jax<0.5,>=0.4.35
   - pytask
