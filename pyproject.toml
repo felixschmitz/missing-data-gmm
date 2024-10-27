@@ -3,11 +3,11 @@
 # ======================================================================================
 
 [project]
-name = "missing_data_GMM"
+name = "missing_data_gmm"
 description = "Implements the GMM algorithm and results from Abrevaya and Donald (2017)."
 requires-python = ">=3.11"
 dependencies = [
-    "pytask",
+    "pytask", "jax>=0.4.35,<0.5",
 ]
 dynamic = ["version"]
 classifiers = [
@@ -34,9 +34,9 @@ content-type = "text/markdown"
 file = "LICENSE"
 
 [project.urls]
-Repository = "https://github.com/felixschmitz/missing_data_GMM"
-Github = "https://github.com/felixschmitz/missing_data_GMM"
-Tracker = "https://github.com/felixschmitz/missing_data_GMM/issues"
+Repository = "https://github.com/felixschmitz/missing_data_gmm"
+Github = "https://github.com/felixschmitz/missing_data_gmm"
+Tracker = "https://github.com/felixschmitz/missing_data_gmm/issues"
 
 
 # ======================================================================================
@@ -48,7 +48,7 @@ requires = ["hatchling", "hatch_vcs"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.hooks.vcs]
-version-file = "src/missing_data_GMM/_version.py"
+version-file = "src/missing_data_gmm/_version.py"
 
 [tool.hatch.build.targets.sdist]
 exclude = ["tests"]
@@ -97,7 +97,7 @@ toml = "*"
 # --------------------------------------------------------------------------------------
 
 [tool.pixi.pypi-dependencies]
-missing_data_GMM = {path = ".", editable = true}
+missing_data_gmm = {path = ".", editable = true}
 kaleido = "*"
 pdbp = "*"
 
@@ -153,7 +153,7 @@ convention = "google"
 # ======================================================================================
 
 [tool.pytask.ini_options]
-paths = ["./src/missing_data_GMM"]
+paths = ["./src/missing_data_gmm"]
 pdbcls = "pdbp:Pdb"
 editor_url_scheme = "vscode"
 task_files = ["task_*.py", "task.py", "tasks.py"]
