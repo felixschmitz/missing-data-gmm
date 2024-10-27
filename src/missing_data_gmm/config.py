@@ -3,7 +3,6 @@
 from pathlib import Path
 
 import pandas as pd
-from pytask import DataCatalog
 
 pd.set_option("mode.copy_on_write", True)
 pd.set_option("future.infer_string", True)
@@ -15,7 +14,7 @@ DATA = SRC.joinpath("..", "..", "data").resolve()
 
 TEST_DIR = SRC.joinpath("..", "..", "tests").resolve()
 
-# DATA_CATALOGS = 
+# DATA_CATALOGS =
 
 
 __all__ = [
