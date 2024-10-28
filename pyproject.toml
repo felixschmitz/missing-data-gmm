@@ -3,11 +3,11 @@
 # ======================================================================================
 
 [project]
-name = "missing_data_gmm"
+name = "missing-data-gmm"
 description = "Implements the GMM algorithm and results from Abrevaya and Donald (2017)."
 requires-python = ">=3.11"
 dependencies = [
-    "pytask", "jax>=0.4.35,<0.5",
+    "pytask",
 ]
 dynamic = ["version"]
 classifiers = [
@@ -100,6 +100,7 @@ toml = "*"
 missing_data_gmm = {path = ".", editable = true}
 kaleido = "*"
 pdbp = "*"
+jax = ">=0.4.35,<0.5"
 
 [tool.pixi.target.win-64.pypi-dependencies]
 kaleido = ">=0.1.0.post1,<=0.1.0.post1"
