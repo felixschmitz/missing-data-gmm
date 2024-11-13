@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pandas as pd
 
-pd.set_option("mode.copy_on_write", True)
-pd.set_option("future.infer_string", True)
-pd.set_option("future.no_silent_downcasting", True)
+pd.set_option("mode.copy_on_write", copy_on_write=True)
+pd.set_option("future.infer_string", infer_string=True)
+pd.set_option("future.no_silent_downcasting", no_silent_downcasting=True)
 pd.set_option("plotting.backend", "plotly")
 
 SRC = Path(__file__).parent.resolve()
@@ -14,13 +14,9 @@ DATA = SRC.joinpath("..", "..", "data").resolve()
 
 TEST_DIR = SRC.joinpath("..", "..", "tests").resolve()
 
-# DATA_CATALOGS =
-
 
 __all__ = [
-    "pd",
     "DATA",
     "SRC",
     "TEST_DIR",
-    # "DATA_CATALOGS",
 ]

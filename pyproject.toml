@@ -140,8 +140,12 @@ lint.extend-ignore = [
 ]
 fix = true
 
-[tool.ruff.lint.pylint]
-max-statements = 100
+[tool.ruff.lint.flake8-boolean-trap]
+extend-allowed-calls = [
+    "pd.set_option.mode.copy_on_write",
+    "pd.set_option.future.infer_string",
+    "pd.set_option.future.no_silent_downcasting"
+]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["D", "PD011"]
