@@ -81,7 +81,7 @@ python = "3.11"
 jupyterlab = "*"
 plotly = ">=5.24,<6"
 pre-commit = ">=4.0.1,<5"
-ipykernel = "*"
+ipykernel = ">=6.29.5,<7"
 pandas = ">=2.1"
 pyarrow = ">=13.0"
 pygraphviz = "*"
@@ -92,6 +92,7 @@ python-graphviz = "*"
 pyyaml = "*"
 statsmodels = "*"
 toml = "*"
+pip = ">=24.3.1,<25"
 
 # Development Dependencies (pypi)
 # --------------------------------------------------------------------------------------
