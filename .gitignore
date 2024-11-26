@@ -23,3 +23,5 @@
 
 # ignore data directory
 data/
+
+*.pdf
