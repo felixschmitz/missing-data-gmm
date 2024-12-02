@@ -56,7 +56,10 @@ def _generate_instruments(n: int, rng: np.random.Generator) -> np.ndarray:
 
 
 def _generate_x(
-    z: np.ndarray, gamma_coefficients: np.ndarray, sd_xi: int, rng: np.random.Generator
+    z: np.ndarray,
+    gamma_coefficients: np.ndarray,
+    sd_xi: float,
+    rng: np.random.Generator,
 ) -> np.ndarray:
     """Generate independent variable x with heteroskedasticity."""
     mean_x = z @ gamma_coefficients  # mx
