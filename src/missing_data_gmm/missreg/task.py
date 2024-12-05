@@ -6,7 +6,9 @@ from typing import Annotated
 from missing_data_gmm.config import DATA
 
 
-def task_do_something(raw_data: Annotated[Path, DATA / "wls-data.dta"]) -> None:
+def task_do_something(
+    raw_data: Annotated[Path, DATA / "missreg" / "wls-data.dta"],
+) -> None:
     """Real world data example for missing data regression.
 
     Args:

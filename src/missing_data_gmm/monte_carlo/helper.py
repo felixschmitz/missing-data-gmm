@@ -37,10 +37,10 @@ def initialize_params() -> dict:
 
     params["n_complete"] = int(
         params["n_observations"] * params["lambda_"]
-    )  # Complete cases
+    )  # Number of complete cases
     params["n_missing"] = (
         params["n_observations"] - params["n_complete"]
-    )  # Missing cases
+    )  # Number of missing cases
     params["b0_coefficients"] = np.array([1, 1, 1])  # True coefficients
     params["gamma_coefficients"] = np.array(
         [1] + [1] * (params["k_regressors"] - 2)
@@ -80,9 +80,8 @@ def _generate_y(x, z, b0, se, rng):
     return mean_y + heteroskedastic_e  # my + e
 
 
-def _partitiona_data(x, z, y, n_observations, lambda_):
+def _partition_data(x, z, y, n_complete):
     """Partition data into complete and incomplete cases."""
-    n_complete = int(n_observations * lambda_)  # Number of complete cases
     return {
         "w_complete": np.column_stack((x[:n_complete], z[:n_complete])),
         "y_complete": y[:n_complete],
@@ -91,7 +90,6 @@ def _partitiona_data(x, z, y, n_observations, lambda_):
         "z_missing": z[n_complete:, 1:],
         "y_missing": y[n_complete:],
         "n_complete": n_complete,
-        "n_missing": n_observations - n_complete,
     }
 
 
@@ -105,19 +103,11 @@ def generate_data(params: dict, rng: np.random.Generator) -> dict:
     Returns:
         dict: Generated data.
     """
-    n_observations, lambda_, b0_coefficients, gamma_coefficients, sd_xi, sd_epsilon = (
-        params["n_observations"],
-        params["lambda_"],
-        params["b0_coefficients"],
-        params["gamma_coefficients"],
-        params["sd_xi"],
-        params["sd_epsilon"],
-    )
-    z = _generate_instruments(n_observations, rng)
-    x = _generate_x(z, gamma_coefficients, sd_xi, rng)
-    y = _generate_y(x, z, b0_coefficients, sd_epsilon, rng)
-    partitions = _partitiona_data(x, z, y, n_observations, lambda_)
-    return {"x": x, "y": y, "z": z, **partitions}
+    z = _generate_instruments(params["n_observations"], rng)
+    x = _generate_x(z, params["gamma_coefficients"], params["sd_xi"], rng)
+    y = _generate_y(x, z, params["b0_coefficients"], params["sd_epsilon"], rng)
+    partitions = _partition_data(x, z, y, params["n_complete"])
+    return {"x": x, "y": y, "z": z, "n_missing": params["n_missing"], **partitions}
 
 
 def apply_method(data, method, params):
