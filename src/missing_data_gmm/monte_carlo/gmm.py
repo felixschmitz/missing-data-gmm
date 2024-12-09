@@ -18,30 +18,34 @@ def gmm_method(data, params):
     # Step 1: Initial OLS estimates using complete cases
     beta_complete = np.linalg.inv(data["w_complete"].T @ data["w_complete"]) @ (
         data["w_complete"].T @ data["y_complete"]
-    )
+    )  # coefficients from eq 2
 
     # Step 2: Imputation coefficients
     gamma_complete = np.linalg.inv(data["z_complete"].T @ data["z_complete"]) @ (
         data["z_complete"].T @ data["x_complete"]
-    )
+    )  # coefficients from eq 3
 
     # Step 3: Initialize parameters for GMM iteration
     theta_initial = np.concatenate(
         [beta_complete, gamma_complete]
     )  # Initial parameter estimates
 
-    # Calculate W_missing
-    x_missing_hat = data["z_missing"] @ gamma_complete  # Imputed X for missing cases
-    w_missing = np.column_stack(
-        [np.ones(data["n_missing"]), x_missing_hat, data["z_missing"]]
-    )  # Design matrix
-
     # Compute initial weighting matrix
-    residuals_complete = data["y_complete"] - data["w_complete"] @ beta_complete
-    residuals_x_complete = data["x_complete"] - data["z_complete"] @ gamma_complete
+    residuals_complete = (
+        data["y_complete"] - data["w_complete"] @ beta_complete
+    )  # epsilon eq 2
+    residuals_x_complete = (
+        data["x_complete"] - data["z_complete"] @ gamma_complete
+    )  # xi eq 3
 
     # Residuals for missing cases
-    residuals_y_missing = data["y_missing"] - w_missing @ beta_complete
+    delta_complete = (
+        gamma_complete[: params["k_regressors"] - 1] * beta_complete[0]
+        + beta_complete[1 : params["k_regressors"]]
+    )  # coefficient from eq 4
+    residuals_y_missing = (
+        data["y_missing"] - data["z_missing"] @ delta_complete
+    )  # eta eq 4
 
     weight_complete = iweight(
         np.hstack(
@@ -74,24 +78,15 @@ def gmm_method(data, params):
     for _ in range(params.get("max_iterations", 100)):
         beta_current = theta_current[: params["k_regressors"]]
         gamma_current = theta_current[params["k_regressors"] :]
-
+        delta_current = (
+            gamma_current * theta_current[0] + theta_current[1 : params["k_regressors"]]
+        )  # coefficient from eq 4
         # Residuals for complete cases
         residuals_complete = data["y_complete"] - data["w_complete"] @ beta_current
         residuals_x_complete = data["x_complete"] - data["z_complete"] @ gamma_current
+        residuals_y_missing = data["y_missing"] - data["z_missing"] @ delta_current
 
-        # Imputed X for missing cases
-        x_missing_hat = data["z_missing"] @ gamma_current
-
-        # Design matrix for missing cases
-        w_missing = np.column_stack(
-            [np.ones(data["n_missing"]), x_missing_hat, data["z_missing"]]
-        )
-
-        # Residuals for missing cases
-        residuals_y_missing = data["y_missing"] - w_missing @ beta_current
-
-        # Moment conditions
-        moments = (1 / params["n_observations"]) * np.concatenate(
+        moments = (1 / params["n_observations"]) * np.hstack(
             [
                 data["w_complete"].T @ residuals_complete,
                 data["z_complete"].T @ residuals_x_complete,
