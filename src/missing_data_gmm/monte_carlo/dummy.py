@@ -18,7 +18,6 @@ def dummy_variable_method(data, params):
         (
             np.concatenate([data["x_complete"], np.zeros(data["n_missing"])]),
             np.concatenate([data["z_complete"], data["z_missing"]]),
-            np.concatenate([np.zeros(data["n_complete"]), np.ones(data["n_missing"])]),
         )
     )
 

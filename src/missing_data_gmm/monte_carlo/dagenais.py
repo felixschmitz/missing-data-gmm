@@ -25,9 +25,7 @@ def dagenais_weighted_method(data, params):
     x_missing_hat = data["z_missing"] @ gamma_hat
 
     # Step 3: Create W_missing by combining x_missing_hat and z_missing
-    w_missing = np.column_stack(
-        [np.ones(data["n_missing"]), x_missing_hat, data["z_missing"]]
-    )
+    w_missing = np.column_stack([x_missing_hat, data["z_missing"]])
 
     # Step 4: Variances for complete and missing cases
     residuals_complete = data["y_complete"] - data["w_complete"] @ beta_ols

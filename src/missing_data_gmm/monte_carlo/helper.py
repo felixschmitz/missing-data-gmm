@@ -23,9 +23,9 @@ def initialize_params() -> dict:
     params["methods"] = [
         "Complete case method",
         "Dummy case method",
-        # "Dagenais (FGLS)",
+        "Dagenais (FGLS)",
         "(Full) GMM",
-        "Statsmodels GMM",
+        # "Statsmodels GMM",
         # "SciPy GMM"
     ]
     params["n_observations"] = 400  # Number of observations
