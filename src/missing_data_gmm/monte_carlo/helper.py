@@ -23,8 +23,8 @@ def initialize_params() -> dict:
     params["methods"] = [
         "Complete case method",
         "Dummy case method",
-        "Dagenais (FGLS)",
-        # "(Full) GMM",
+        # "Dagenais (FGLS)",
+        "(Full) GMM",
         "Statsmodels GMM",
         # "SciPy GMM"
     ]
@@ -86,8 +86,8 @@ def _partition_data(x, z, y, n_complete):
         "w_complete": np.column_stack((x[:n_complete], z[:n_complete])),
         "y_complete": y[:n_complete],
         "x_complete": x[:n_complete],
-        "z_complete": z[:n_complete, 1:],
-        "z_missing": z[n_complete:, 1:],
+        "z_complete": z[:n_complete, :],
+        "z_missing": z[n_complete:, :],
         "y_missing": y[n_complete:],
         "n_complete": n_complete,
     }
