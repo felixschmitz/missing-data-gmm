@@ -42,7 +42,7 @@ def gmm_method(data, params):
     delta_complete = (
         gamma_complete[: params["k_regressors"] - 1] * beta_complete[0]
         + beta_complete[1 : params["k_regressors"]]
-    )  # coefficient from eq 4
+    )  # coefficient from eq 4 alpha_0 * gamma_0 + beta_0
     residuals_y_missing = (
         data["y_missing"] - data["z_missing"] @ delta_complete
     )  # eta eq 4
@@ -93,32 +93,48 @@ def gmm_method(data, params):
                 data["z_missing"].T @ residuals_y_missing,
             ]
         )
-
         # Gradient matrix
-        gradient_matrix = np.block(
+        gradient_matrix = np.vstack(
             [
-                [
-                    data["w_complete"].T
-                    @ data["w_complete"]
-                    / params["n_observations"],
-                    np.zeros((params["k_regressors"], 1)),
-                    np.zeros((params["k_regressors"], 1)),
-                ],
-                [
-                    np.zeros((1, params["k_regressors"])),
-                    data["z_complete"].T
-                    @ data["z_complete"]
-                    / params["n_observations"],
-                    np.zeros((1, 1)),
-                ],
-                [
-                    np.zeros((1, params["k_regressors"])),
-                    np.zeros((1, 1)),
-                    data["z_missing"].T @ data["z_missing"] / params["n_observations"],
-                ],
+                np.hstack(
+                    [
+                        data["w_complete"].T
+                        @ data["w_complete"]
+                        / params["n_observations"],  # G_{11}
+                        np.zeros(
+                            (data["w_complete"].shape[1], data["z_complete"].shape[1])
+                        ),
+                    ]
+                ),
+                np.hstack(
+                    [
+                        np.zeros(
+                            (data["z_complete"].shape[1], data["w_complete"].shape[1])
+                        ),  # G_{22}
+                        data["z_complete"].T
+                        @ data["z_complete"]
+                        / params["n_observations"],
+                    ]
+                ),
+                np.hstack(
+                    [
+                        (
+                            data["z_missing"].T
+                            @ data["z_missing"]
+                            @ gamma_current
+                            / params["n_observations"]
+                        ).reshape(-1, 1),  # first part of G_{31}
+                        data["z_missing"].T
+                        @ data["z_missing"]
+                        / params["n_observations"],  # second part of G_{31}
+                        data["z_missing"].T
+                        @ data["z_missing"]
+                        * beta_current[0]
+                        / params["n_observations"],  # G_{32}
+                    ]
+                ),
             ]
         )
-
         # Update estimates
         theta_new = theta_current + np.linalg.inv(
             gradient_matrix.T @ weight_matrix @ gradient_matrix
