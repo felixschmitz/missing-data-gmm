@@ -24,7 +24,7 @@ def initialize_params() -> dict:
         "Complete case method",
         "Dummy case method",
         "Dagenais (FGLS)",
-        "(Full) GMM",
+        "GMM",
         # "Statsmodels GMM",
         # "SciPy GMM"
     ]
