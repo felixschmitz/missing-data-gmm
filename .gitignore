@@ -21,7 +21,7 @@
 #VSCode
 .vscode/
 
-# ignore data directory
-data/
+# ignore bld directory
+bld/
 
 *.pdf
