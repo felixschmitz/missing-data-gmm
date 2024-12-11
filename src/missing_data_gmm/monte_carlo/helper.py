@@ -24,7 +24,7 @@ def initialize_params() -> dict:
         "Complete case method",
         "Dummy case method",
         "Dagenais (FGLS)",
-        "(Full) GMM",
+        "GMM",
         # "Statsmodels GMM",
         # "SciPy GMM"
     ]
@@ -127,7 +127,7 @@ def apply_method(data, method, params):
         return dummy_variable_method(data, params)
     if method == "Dagenais (FGLS)":
         return dagenais_weighted_method(data, params)
-    if method == "(Full) GMM":
+    if method == "GMM":
         return gmm_method(data, params)
     if method == "Statsmodels GMM":
         return statsmodels_gmm_method(data, params)

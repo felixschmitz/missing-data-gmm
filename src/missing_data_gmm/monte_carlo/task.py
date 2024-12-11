@@ -20,7 +20,7 @@ def _error_handling_methods(methods: list):
             "Complete case method",
             "Dummy case method",
             "Dagenais (FGLS)",
-            "(Full) GMM",
+            "GMM",
             "Statsmodels GMM",
             "SciPy GMM",
         ]:
