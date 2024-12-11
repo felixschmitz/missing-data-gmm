@@ -31,6 +31,6 @@ def task_output_table(
         column_format="lcccc",
         caption="Monte Carlo Replication Results",
         label="tab:my_simulation_results",
-        header=["Estimation Method", "Parameter", "Bias", "n*Var", "MSE"],
+        header=["Estimation Method", "Parameter", "Bias", r"n$\times$Var", "MSE"],
         escape=False,
     )
