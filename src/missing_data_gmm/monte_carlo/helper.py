@@ -39,6 +39,7 @@ def initialize_params() -> dict:
     params["gamma_coefficients"] = np.array(
         [1] + [1] * (params["k_regressors"] - 2)
     )  # Imputation coefficients
+    params["max_iterations"] = 100  # number of max iterations of gmm
     return params
 
 
