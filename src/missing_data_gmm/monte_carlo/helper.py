@@ -6,11 +6,7 @@ import pandas as pd
 from missing_data_gmm.monte_carlo.complete import complete_case_method
 from missing_data_gmm.monte_carlo.dagenais import dagenais_weighted_method
 from missing_data_gmm.monte_carlo.dummy import dummy_variable_method
-from missing_data_gmm.monte_carlo.gmm import (
-    gmm_method,
-    scipy_gmm_method,
-    statsmodels_gmm_method,
-)
+from missing_data_gmm.monte_carlo.gmm import gmm_method
 
 
 def initialize_params() -> dict:
@@ -25,8 +21,6 @@ def initialize_params() -> dict:
         "Dummy case method",
         "Dagenais (FGLS)",
         "GMM",
-        # "Statsmodels GMM",
-        # "SciPy GMM"
     ]
     params["n_observations"] = 400  # Number of observations
     params["k_regressors"] = 3  # Number of regressors (including intercept)
@@ -129,10 +123,6 @@ def apply_method(data, method, params):
         return dagenais_weighted_method(data, params)
     if method == "GMM":
         return gmm_method(data, params)
-    if method == "Statsmodels GMM":
-        return statsmodels_gmm_method(data, params)
-    if method == "SciPy GMM":
-        return scipy_gmm_method(data, params)
     msg = f"Unknown method: {method}"
     raise ValueError(msg)
 

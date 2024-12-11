@@ -1,8 +1,6 @@
 """GMM estimation methods."""
 
 import numpy as np
-from scipy.optimize import minimize
-from statsmodels.sandbox.regression.gmm import LinearIVGMM
 
 
 def gmm_method(data, params):
@@ -178,98 +176,3 @@ def iweight(matrix):
     for j in range(n):
         weight_matrix += np.outer(matrix[j, :], matrix[j, :]) / n
     return np.linalg.inv(weight_matrix)
-
-
-def statsmodels_gmm_method(data, params):
-    """Apply the statsmodels GMM estimation method.
-
-    Args:
-        data (dict): Dictionary containing the complete and missing data.
-        params (dict): Dictionary containing the parameters.
-
-    Returns:
-        dict: Dictionary containing the estimated coefficients and standard errors.
-    """
-    # Initialize the GMM model
-    model = LinearIVGMM(data["y_complete"], data["w_complete"], data["z_complete"])
-
-    # Fit the model
-    result = model.fit(start_params=params["b0_coefficients"])
-
-    return {
-        "coefficients": result.params,
-        "standard_errors": result.bse,
-    }
-
-
-def _gmm_objective(params, y, x, z, weighting_matrix):
-    """GMM objective function to minimize."""
-    residuals = y - x @ params
-    moments = z.T @ residuals
-    return moments.T @ weighting_matrix @ moments
-
-
-def _compute_optimal_weighting_matrix(params, data):
-    """Compute the optimal weighting matrix for GMM."""
-    residuals = data["y_complete"] - data["w_complete"] @ params
-    moments = data["z_complete"].T @ residuals
-    cov_moments = moments @ moments.T / len(data["y_complete"])
-    return np.linalg.inv(cov_moments)
-
-
-def _compute_standard_errors(weighting_matrix, data):
-    """Compute standard errors for GMM estimates."""
-    jacobian = -data["z_complete"].T @ data["w_complete"] / len(data["y_complete"])
-    var_cov_matrix = np.linalg.inv(jacobian.T @ weighting_matrix @ jacobian)
-    return np.sqrt(np.diag(var_cov_matrix))
-
-
-def scipy_gmm_method(data, params):
-    """Apply the GMM estimation method using SciPy optimization.
-
-    Parameters:
-        data (dict): Generated data from `_generate_data`.
-        params (dict): Simulation parameters.
-
-    Returns:
-        dict: Results containing coefficients and standard errors.
-    """
-    # Initial estimation with identity weighting matrix
-    initial_weighting_matrix = np.eye(data["z_complete"].shape[1])
-    initial_params = params["b0_coefficients"]
-
-    # Step 1: Optimize GMM objective function
-    result = minimize(
-        _gmm_objective,
-        initial_params,
-        args=(
-            data["y_complete"],
-            data["w_complete"],
-            data["z_complete"],
-            initial_weighting_matrix,
-        ),
-    )
-    coefficients = result.x
-
-    # Step 2: Compute optimal weighting matrix
-    optimal_weighting_matrix = _compute_optimal_weighting_matrix(coefficients, data)
-
-    # Step 3: Re-optimize with the optimal weighting matrix
-    result = minimize(
-        _gmm_objective,
-        coefficients,
-        args=(
-            data["y_complete"],
-            data["w_complete"],
-            data["z_complete"],
-            optimal_weighting_matrix,
-        ),
-    )
-    coefficients = result.x
-
-    # Step 4: Compute standard errors
-    standard_errors = _compute_standard_errors(
-        coefficients, optimal_weighting_matrix, data
-    )
-
-    return {"coefficients": coefficients, "standard_errors": standard_errors}

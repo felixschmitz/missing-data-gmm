@@ -21,8 +21,6 @@ def _error_handling_methods(methods: list):
             "Dummy case method",
             "Dagenais (FGLS)",
             "GMM",
-            "Statsmodels GMM",
-            "SciPy GMM",
         ]:
             msg = f"Unknown method: {method}"
             raise ValueError(msg)
