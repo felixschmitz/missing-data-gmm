@@ -144,7 +144,7 @@ def _calculate_estimates(data, params, weight_matrix, theta_current):
     )
 
     gradient_matrix = _calculate_gradient_matrix(
-        data, params, beta_current, gamma_current, theta_current
+        data, params, beta_current, gamma_current
     )
 
     return theta_current + np.linalg.inv(
