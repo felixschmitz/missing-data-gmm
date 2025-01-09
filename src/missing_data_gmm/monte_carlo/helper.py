@@ -153,21 +153,8 @@ def generate_data(params: dict, rng: np.random.Generator) -> dict:
         v = np.square(u) - 1
     else:
         v = rng.standard_normal(params["n_observations"])
-    x = _generate_x(
-        z,
-        v,
-        params["gamma_coefficients"],
-        params["delta_coefficients"],
-        params["exponential"],
-    )
-    y = _generate_y(
-        x,
-        z,
-        u,
-        params["b0_coefficients"],
-        params["theta_coefficients"],
-        params["exponential"],
-    )
+    x = _generate_x(z, v, params)
+    y = _generate_y(x, z, u, params)
 
     partitions = _partition_data(x, z, y, params["n_complete"])
     return {"x": x, "y": y, "z": z, "n_missing": params["n_missing"], **partitions}
