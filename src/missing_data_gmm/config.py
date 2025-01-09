@@ -18,6 +18,9 @@ DOCUMENTS = ROOT.joinpath("documents").resolve()
 
 TEST_DIR = SRC.joinpath("..", "..", "tests").resolve()
 
+# 0 is the specification of the final paper, 1-8 are from the appendix
+MC_DESIGNS = list(range(9))
+
 SEX_NAMES = ("male", "not-male")
 DATA_NAMES = ("wls-data", "wls-data-adultbmi")
 
@@ -38,10 +41,9 @@ __all__ = [
     "DATA",
     "DOCUMENTS",
     "BLD",
+    "MC_DESIGNS",
     "ROOT",
     "SRC",
     "TEST_DIR",
-    "SEX_NAMES",
-    "DATA_NAMES",
     "DATA_CATALOGS",
 ]

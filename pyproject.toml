@@ -146,7 +146,7 @@ fix = true
 "tests/*" = ["D", "PD011"]
 "**/task.py" = ["ANN"]
 "**/config.py" = ["FBT003"] # modern pandas settings
-"**/monte_carlo/helper.py" = ["ERA001"] # commented-out replication code
+"**/monte_carlo/helper.py" = ["ERA001", "PLR0911"] # commented-out replication code and match-case of MC_DESIGN
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

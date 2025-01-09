@@ -4,24 +4,21 @@ from typing import Annotated
 
 import numpy as np
 import pandas as pd
+from pytask import task
 
-from missing_data_gmm.config import DATA_CATALOGS
+from missing_data_gmm.config import DATA_CATALOGS, MC_DESIGNS
 from missing_data_gmm.monte_carlo.helper import (
+    METHODS,
     apply_method,
     generate_data,
-    initialize_params,
+    initialize_replication_params,
     results_statistics,
 )
 
 
 def _error_handling_methods(methods: list):
     for method in methods:
-        if method not in [
-            "Complete case method",
-            "Dummy case method",
-            "Dagenais (FGLS)",
-            "GMM",
-        ]:
+        if method not in METHODS:
             msg = f"Unknown method: {method}"
             raise ValueError(msg)
 
@@ -35,21 +32,27 @@ def _error_handling_params(params: dict):
             "n_replications",
             "n_complete",
             "n_missing",
+            "random_key",
         ]
     ):
         msg = """Parameters n_observations, k_regressors, n_replications, n_complete,
-        and n_missing must be integers."""
+        n_missing, and random_key must be integers."""
         raise ValueError(msg)
-    if not all(
-        isinstance(params[key], float) for key in ["lambda_", "sd_xi", "sd_epsilon"]
-    ):
-        msg = "Parameters lambda_, sd_xi, and sd_epsilon must be floats."
+    if not all(isinstance(params[key], (float)) for key in ["lambda_"]):
+        msg = "Parameter lambda_ must be a float."
         raise ValueError(msg)
     if not all(
         isinstance(params[key], np.ndarray)
-        for key in ["b0_coefficients", "gamma_coefficients"]
+        for key in [
+            "alpha_coefficients",
+            "b0_coefficients",
+            "delta_coefficients",
+            "gamma_coefficients",
+            "theta_coefficients",
+        ]
     ):
-        msg = "Parameters b0_coefficients and gamma_coefficients must be numpy arrays."
+        msg = """Parameters alpha_coefficients, b0_coefficients, delta_coefficients,
+        gamma_coefficients, and theta_coefficients must be numpy arrays."""
         raise ValueError(msg)
     if not isinstance(params["methods"], list):
         msg = "Parameter methods must be a list."
@@ -59,39 +62,32 @@ def _error_handling_params(params: dict):
         raise ValueError(msg)
 
 
-def _error_handling_random_key(random_key: int):
-    if not isinstance(random_key, int):
-        msg = "Random key must be an integer."
-        raise TypeError(msg)
-
-
-def _error_handling(params: dict, random_key: int):
+def _error_handling(params: dict):
     _error_handling_methods(params["methods"])
     _error_handling_params(params)
-    _error_handling_random_key(random_key)
 
 
-RANDOM_KEY = 123456
-CONSTANT_PARAMS = initialize_params()
+for design in MC_DESIGNS:
+    params = initialize_replication_params(design)
 
+    @task(id=str(design))
+    def task_simulate(
+        params: Annotated[dict, params],
+    ) -> Annotated[pd.DataFrame, DATA_CATALOGS["simulation"][f"MC_RESULTS_{design}"]]:
+        """Run Monte Carlo simulation for different methods.
 
-def task_simulate(
-    params: Annotated[dict, CONSTANT_PARAMS], random_key: Annotated[int, RANDOM_KEY]
-) -> Annotated[pd.DataFrame, DATA_CATALOGS["simulation"]["MC_RESULTS"]]:
-    """Run Monte Carlo simulation for different methods.
+        Parameters:
+            params (dict): Simulation parameters.
+            random_key (int): Random seed for reproducibility.
 
-    Parameters:
-        params (dict): Simulation parameters.
-        random_key (int): Random seed for reproducibility.
-
-    Returns:
-        pd.DataFrame: Formatted simulation results.
-    """
-    _error_handling(params, random_key)
-    rng = np.random.default_rng(random_key)
-    results = {method: [] for method in params["methods"]}
-    for _replication in range(params["n_replications"]):
-        data = generate_data(params, rng)
-        for method in params["methods"]:
-            results[method].append(apply_method(data, method, params))
-    return results_statistics(results, params)
+        Returns:
+            pd.DataFrame: Formatted simulation results.
+        """
+        _error_handling(params)
+        rng = np.random.default_rng(params["random_key"])
+        results = {method: [] for method in params["methods"]}
+        for _replication in range(params["n_replications"]):
+            data = generate_data(params, rng)
+            for method in params["methods"]:
+                results[method].append(apply_method(data, method, params))
+        return results_statistics(results, params)

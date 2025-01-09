@@ -8,38 +8,75 @@ from missing_data_gmm.monte_carlo.dagenais import dagenais_weighted_method
 from missing_data_gmm.monte_carlo.dummy import dummy_variable_method
 from missing_data_gmm.monte_carlo.gmm import gmm_method
 
+METHODS = ["Complete case method", "Dummy case method", "Dagenais (FGLS)", "GMM"]
 
-def initialize_params() -> dict:
+
+def _get_design_parameters(design: int) -> list:
+    match design:
+        case 0:
+            # this is unclear to me
+            return [np.array([1]), np.array([1, 1, 1]), np.array([1, 1]), False]
+        case 1:
+            return [np.array([1]), np.array([10, 0, 0]), np.array([10, 0]), False]
+        case 2:
+            return [np.array([0.1]), np.array([10, 0, 0]), np.array([10, 0]), False]
+        case 3:
+            return [np.array([1]), np.array([1, 0, 0]), np.array([10, 0]), False]
+        case 4:
+            return [np.array([1]), np.array([1, 0, 1]), np.array([1, 1]), False]
+        case 5:
+            return [np.array([1]), np.array([1, 1, 1]), np.array([1, 1]), False]
+        case 6:
+            return [np.array([1]), np.array([1, 0, 0]), np.array([1, 0]), False]
+        case 7:
+            return [np.array([1]), np.array([1, 0, 1]), np.array([1, 1]), False]
+        case 8:
+            return [
+                np.array([1]),
+                np.array([0.1, 0.2, 0.1]),
+                np.array([0.1, 0.2]),
+                True,
+            ]
+
+
+def initialize_replication_params(design: int = 0) -> dict:
     """Initialize parameters for the Monte Carlo simulation.
 
     Returns:
         dict: Parameters for the Monte Carlo simulation.
     """
     params = {}
-    params["methods"] = [
-        "Complete case method",
-        "Dummy case method",
-        "Dagenais (FGLS)",
-        "GMM",
-    ]
+    params["design"] = design
+    params["methods"] = METHODS
     params["n_observations"] = 400  # Number of observations
     params["k_regressors"] = 3  # Number of regressors (including intercept)
     params["lambda_"] = 0.5  # Proportion of observations with missing data
-    params["sd_xi"] = 1.0  # Standard deviation for xi
-    params["sd_epsilon"] = 1.0  # Standard deviation for epsilon
     params["n_replications"] = 1000  # Number of Monte Carlo replications
-
     params["n_complete"] = int(
         params["n_observations"] * params["lambda_"]
     )  # Number of complete cases
     params["n_missing"] = (
         params["n_observations"] - params["n_complete"]
     )  # Number of missing cases
-    params["b0_coefficients"] = np.array([1, 1, 1])  # True coefficients
+
+    keys = [
+        "alpha_coefficients",
+        "theta_coefficients",
+        "delta_coefficients",
+        "exponential",
+    ]
+    values = _get_design_parameters(design)
+    params.update(dict(zip(keys, values, strict=False)))
+
+    params["b0_coefficients"] = np.array(
+        [params["alpha_coefficients"][0]] + [1] * (params["k_regressors"] - 1)
+    )  # True coefficients
     params["gamma_coefficients"] = np.array(
-        [1] + [1] * (params["k_regressors"] - 2)
+        [1] * (params["k_regressors"] - 1)
     )  # Imputation coefficients
+
     params["max_iterations"] = 100  # number of max iterations of gmm
+    params["random_key"] = 123456
     return params
 
 
@@ -47,32 +84,38 @@ def _generate_instruments(n: int, rng: np.random.Generator) -> np.ndarray:
     """Generate instrument variables z including intercept."""
     # binary_instrument = rng.standard_normal(n) > 0.5  # z1
     continuous_instrument = rng.standard_normal(n)  # z2
-    return np.column_stack((np.ones(n), continuous_instrument))  # z
+    return np.column_stack((np.ones(n), continuous_instrument))  # z with intercept
 
 
 def _generate_x(
     z: np.ndarray,
-    gamma_coefficients: np.ndarray,
-    sd_xi: float,
-    rng: np.random.Generator,
+    v: np.ndarray,
+    params: dict,
 ) -> np.ndarray:
     """Generate independent variable x with heteroskedasticity."""
-    mean_x = z @ gamma_coefficients  # mx
-    heteroskedasticity_factor = np.sqrt(z[:, 0] + z[:, 1] ** 2)  # hetx
-    heteroskedastic_xi = (
-        sd_xi * rng.standard_normal(len(z)) * heteroskedasticity_factor
-    )  # xi
-    return mean_x + heteroskedastic_xi  # mx + xi
+    mean_x = z @ params["gamma_coefficients"]  # mx
+    regressors = np.column_stack([np.ones_like(z[:, 1]), np.square(z[:, 1])])
+    sigma_xi = np.sqrt(np.dot(regressors, params["delta_coefficients"]))
+
+    if params["exponential"]:
+        return mean_x + v * np.exp(sigma_xi)
+    return mean_x + v * sigma_xi
 
 
-def _generate_y(x, z, b0, se, rng):
+def _generate_y(
+    x: np.ndarray,
+    z: np.ndarray,
+    u: np.ndarray,
+    params: dict,
+) -> np.ndarray:
     """Generate dependent variable y with heteroskedasticity."""
-    mean_y = np.column_stack((x, z)) @ b0  # my
-    heteroskedasticity_factor = np.sqrt(z[:, 0] + z[:, 1] ** 2 + x**2)  # hety
-    heteroskedastic_e = (
-        se * rng.standard_normal(len(z)) * heteroskedasticity_factor
-    )  # e
-    return mean_y + heteroskedastic_e  # my + e
+    mean_y = np.column_stack((x, z)) @ params["b0_coefficients"]  # my
+    regressors = np.column_stack([np.ones_like(x), np.square(x), np.square(z[:, 1])])
+    sigma_epsilon = np.sqrt(np.dot(regressors, params["theta_coefficients"]))
+
+    if params["exponential"]:
+        return mean_y + u * np.exp(sigma_epsilon)
+    return mean_y + u * sigma_epsilon
 
 
 def _partition_data(x, z, y, n_complete):
@@ -98,9 +141,34 @@ def generate_data(params: dict, rng: np.random.Generator) -> dict:
     Returns:
         dict: Generated data.
     """
-    z = _generate_instruments(params["n_observations"], rng)
-    x = _generate_x(z, params["gamma_coefficients"], params["sd_xi"], rng)
-    y = _generate_y(x, z, params["b0_coefficients"], params["sd_epsilon"], rng)
+    z = np.column_stack(
+        (
+            np.ones(params["n_observations"]),
+            rng.standard_normal(params["n_observations"]),
+        )
+    )  # continuous instrument z with intercept
+
+    u = rng.standard_normal(params["n_observations"])
+    if params["design"] in [6, 7]:
+        v = np.square(u) - 1
+    else:
+        v = rng.standard_normal(params["n_observations"])
+    x = _generate_x(
+        z,
+        v,
+        params["gamma_coefficients"],
+        params["delta_coefficients"],
+        params["exponential"],
+    )
+    y = _generate_y(
+        x,
+        z,
+        u,
+        params["b0_coefficients"],
+        params["theta_coefficients"],
+        params["exponential"],
+    )
+
     partitions = _partition_data(x, z, y, params["n_complete"])
     return {"x": x, "y": y, "z": z, "n_missing": params["n_missing"], **partitions}
 
