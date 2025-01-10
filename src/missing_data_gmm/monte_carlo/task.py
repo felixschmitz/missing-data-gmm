@@ -6,9 +6,8 @@ import numpy as np
 import pandas as pd
 from pytask import task
 
-from missing_data_gmm.config import DATA_CATALOGS, MC_DESIGNS
+from missing_data_gmm.config import DATA_CATALOGS, MC_DESIGNS, METHODS
 from missing_data_gmm.monte_carlo.helper import (
-    METHODS,
     apply_method,
     generate_data,
     initialize_replication_params,

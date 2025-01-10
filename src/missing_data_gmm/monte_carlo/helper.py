@@ -3,12 +3,11 @@
 import numpy as np
 import pandas as pd
 
+from missing_data_gmm.config import METHODS
 from missing_data_gmm.monte_carlo.complete import complete_case_method
 from missing_data_gmm.monte_carlo.dagenais import dagenais_weighted_method
 from missing_data_gmm.monte_carlo.dummy import dummy_variable_method
 from missing_data_gmm.monte_carlo.gmm import gmm_method
-
-METHODS = ["Complete case method", "Dummy case method", "Dagenais (FGLS)", "GMM"]
 
 
 def _get_design_parameters(design: int) -> list:
