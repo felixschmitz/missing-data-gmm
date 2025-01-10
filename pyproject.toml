@@ -81,17 +81,18 @@ python = "3.11"
 jupyterlab = "*"
 plotly = ">=5.24,<6"
 pre-commit = ">=4.0.1,<5"
-ipykernel = "*"
+ipykernel = ">=6.29.5,<7"
 pandas = ">=2.1"
 pyarrow = ">=13.0"
 pygraphviz = "*"
-pytask-latex = ">=0.4.0"
+pytask-latex = ">=0.4.2,<0.5"
 pytask-parallel = ">=0.4.0"
 pytask = ">=0.4.7"
 python-graphviz = "*"
 pyyaml = "*"
 statsmodels = "*"
 toml = "*"
+pip = ">=24.3.1,<25"
 
 # Development Dependencies (pypi)
 # --------------------------------------------------------------------------------------
@@ -145,6 +146,7 @@ fix = true
 "tests/*" = ["D", "PD011"]
 "**/task.py" = ["ANN"]
 "**/config.py" = ["FBT003"] # modern pandas settings
+"**/monte_carlo/helper.py" = ["ERA001", "PLR0911"] # commented-out replication code and match-case of MC_DESIGN
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -155,7 +157,7 @@ convention = "google"
 # ======================================================================================
 
 [tool.pytask.ini_options]
-paths = ["./src/missing_data_gmm"]
+paths = ["./src/missing_data_gmm", "./documents"]
 pdbcls = "pdbp:Pdb"
 editor_url_scheme = "vscode"
 task_files = ["task_*.py", "task.py", "tasks.py"]

@@ -1,0 +1,73 @@
+\documentclass[11pt, a4paper, leqno]{article}
+\usepackage{a4wide}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{float, afterpage, rotating, graphicx}
+\usepackage{epstopdf}
+\usepackage{longtable, booktabs, tabularx}
+\usepackage{fancyvrb, moreverb, relsize}
+\usepackage{eurosym, calc}
+% \usepackage{chngcntr}
+\usepackage{amsmath, amssymb, amsfonts, amsthm, bm}
+\usepackage{caption}
+\usepackage{mdwlist}
+\usepackage{xfrac}
+\usepackage{setspace}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{subcaption}
+\usepackage{minibox}
+% \usepackage{pdf14} % Enable for Manuscriptcentral -- can't handle pdf 1.5
+% \usepackage{endfloat} % Enable to move tables / figures to the end. Useful for some
+% submissions.
+
+\usepackage[unicode=true]{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    anchorcolor=black,
+    citecolor=NavyBlue,
+    filecolor=black,
+    menucolor=black,
+    runcolor=black,
+    urlcolor=NavyBlue
+}
+
+
+\widowpenalty=10000
+\clubpenalty=10000
+
+\setlength{\parskip}{1ex}
+\setlength{\parindent}{0ex}
+\setstretch{1.5}
+
+
+\begin{document}
+
+\title{Reproduction and Expansion of \\"A GMM Approach For Dealing With Missing Data On Regressors" by Jason Abrevaya and Stephen G. Donald}
+
+\author{Florian Husch, Felix Schmitz, Timothy Voeste}
+
+\date{
+    {\bf Under construction}
+    \\[1ex]
+    \today
+}
+
+\maketitle
+\footnotetext[1]{Email: \href{mailto:s3flhusc@uni-bonn.de}{s3flhusc@uni-bonn.de}, \href{mailto:s87fschm@uni-bonn.de}{s87fschm@uni-bonn.de}, \href{mailto:s6tivoes@uni-bonn.de}{s6tivoes@uni-bonn.de}}
+
+\begin{abstract}
+    Some abstract here.
+\end{abstract}
+
+\clearpage
+
+\input{../bld/tables/simulation_results_design0.tex}
+
+Table \ref{table:MCReplicationResultsDesign0} on page \pageref{table:MCReplicationResultsDesign0} refers
+to the simulation presented in the paper, and Table \ref{table:MCReplicationResultsDesign1} on page \pageref{table:MCReplicationResultsDesign1}
+refers to the first design in the appendix.
+
+\input{appendix.tex}
+
+\end{document}
