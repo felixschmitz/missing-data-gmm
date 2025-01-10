@@ -1,0 +1,75 @@
+\documentclass[aspectratio=1610]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\title{Latex Beamer Bonn Style}
+\date{\today}
+\author{Author}
+
+\usetheme{UniBonn}
+
+\begin{document}
+	\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+\begin{framecontent}
+	\frametitle{Table of contents}
+	\framesubtitle{How to use the University of Bonn beamer style}
+\end{framecontent}
+
+
+
+\section{Blocks and enumerations}
+\begin{frame}
+\frametitle{Blocks and enumerations}
+\framesubtitle{How to use}
+\begin{block}{A block}
+	This is the block content.
+\end{block}
+\begin{theorem}
+	Some theorem \end{theorem}
+\begin{enumerate}
+	\item<1-| alert@1> Some enumeration with subitems
+	\begin{enumerate}
+		\item Subitem
+	\end{enumerate}
+	\item<2-> Second item
+	\item<3-> Third item
+\end{enumerate}
+\end{frame}
+
+\section{Items}
+\begin{frame}{Items}
+\begin{itemize}
+\item First item
+\item Second item
+\end{itemize}
+\end{frame}
+
+\begin{frameverticalcontent}
+	\frametitle{Table of contents}
+	\framesubtitle{The content of the presentation}
+\end{frameverticalcontent}
+
+\section{Other types of frames}
+
+\begin{framecenter}
+	\frametitle{Centered Title}
+	\framesubtitle{This is a frame with centered title}
+\end{framecenter}
+
+\begin{framevertical}
+	\frametitle{Vertical Frame}
+	\framesubtitle{A frame with vertical boxes}
+\end{framevertical}
+
+
+
+
+
+\begin{frameblank}
+	Frame without title
+\end{frameblank}
+
+
+\end{document}

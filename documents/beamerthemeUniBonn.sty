@@ -1,0 +1,36 @@
+\mode<presentation>
+
+% Requirement
+\RequirePackage{tikz}
+\RequirePackage{xcolor}
+\RequirePackage{extarrows}
+\RequirePackage{chemfig}
+\RequirePackage{subcaption}
+\RequirePackage{ifthen}
+\RequirePackage[outline]{contour}
+\RequirePackage{enumerate}
+\RequirePackage{comment}
+\RequirePackage{svg}
+\RequirePackage{times}
+
+% Settings
+\useinnertheme{UniBonn}
+\useoutertheme{UniBonn}
+\usecolortheme{UniBonn}
+
+
+
+
+\newcommand{\checkfor}[1]{%
+	\ifcsname#1\endcsname%
+	1
+	\else%
+	0
+	\fi%
+}
+
+\newcommand{\AddLogo}[1]{\newcommand{\TheLogo}{#1}}
+\newsavebox{\longestsec}% Box to save longest sectional heading
+
+
+\mode<all>
