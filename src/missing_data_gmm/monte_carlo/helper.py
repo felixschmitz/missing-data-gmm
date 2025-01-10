@@ -14,7 +14,6 @@ METHODS = ["Complete case method", "Dummy case method", "Dagenais (FGLS)", "GMM"
 def _get_design_parameters(design: int) -> list:
     match design:
         case 0:
-            # this is unclear to me
             return [np.array([1]), np.array([1, 1, 1]), np.array([1, 1]), False]
         case 1:
             return [np.array([1]), np.array([10, 0, 0]), np.array([10, 0]), False]
