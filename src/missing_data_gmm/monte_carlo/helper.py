@@ -47,7 +47,9 @@ def initialize_replication_params(design: int = 0) -> dict:
     params["design"] = design
     params["methods"] = METHODS
     params["n_observations"] = 400  # Number of observations
-    params["k_regressors"] = 3  # Number of regressors (including intercept)
+    # the encoding of k_regressors is dangerous,
+    # since we need to match it with the data generating process
+    params["k_regressors"] = 3  # Number of regressors (including constant)
     params["lambda_"] = 0.5  # Proportion of observations with missing data
     params["n_replications"] = 1000  # Number of Monte Carlo replications
     params["n_complete"] = int(
@@ -79,10 +81,10 @@ def initialize_replication_params(design: int = 0) -> dict:
 
 
 def _generate_instruments(n: int, rng: np.random.Generator) -> np.ndarray:
-    """Generate instrument variables z including intercept."""
+    """Generate instrument variables z including constant."""
     # binary_instrument = rng.standard_normal(n) > 0.5  # z1
     continuous_instrument = rng.standard_normal(n)  # z2
-    return np.column_stack((np.ones(n), continuous_instrument))  # z with intercept
+    return np.column_stack((np.ones(n), continuous_instrument))  # z with constant
 
 
 def _generate_x(
@@ -126,6 +128,8 @@ def _partition_data(x, z, y, n_complete):
         "z_missing": z[n_complete:, :],
         "y_missing": y[n_complete:],
         "n_complete": n_complete,
+        "n_missing": x.shape[0] - n_complete,
+        "n_observations": x.shape[0],
     }
 
 
@@ -144,7 +148,7 @@ def generate_data(params: dict, rng: np.random.Generator) -> dict:
             np.ones(params["n_observations"]),
             rng.standard_normal(params["n_observations"]),
         )
-    )  # continuous instrument z with intercept
+    )  # continuous instrument z with constant
 
     u = rng.standard_normal(params["n_observations"])
     if params["design"] in [6, 7]:
@@ -155,7 +159,7 @@ def generate_data(params: dict, rng: np.random.Generator) -> dict:
     y = _generate_y(x, z, u, params)
 
     partitions = _partition_data(x, z, y, params["n_complete"])
-    return {"x": x, "y": y, "z": z, "n_missing": params["n_missing"], **partitions}
+    return {"x": x, "y": y, "z": z, **partitions}
 
 
 def apply_method(data, method, params):
@@ -172,9 +176,9 @@ def apply_method(data, method, params):
     if method == "Complete case method":
         return complete_case_method(data, params)
     if method == "Dummy case method":
-        return dummy_variable_method(data, params)
+        return dummy_variable_method(data)
     if method == "Dagenais (FGLS)":
-        return dagenais_weighted_method(data, params)
+        return dagenais_weighted_method(data)
     if method == "GMM":
         return gmm_method(data, params)
     msg = f"Unknown method: {method}"

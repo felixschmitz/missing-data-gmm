@@ -1,6 +1,7 @@
 """All the general configuration of the project."""
 
 from pathlib import Path
+from typing import NamedTuple
 
 import pandas as pd
 from pytask import DataCatalog
@@ -23,29 +24,81 @@ MC_DESIGNS = list(range(9))
 
 METHODS = ["Complete case method", "Dummy case method", "Dagenais (FGLS)", "GMM"]
 
-SEX_NAMES = ("male", "not-male")
-DATA_NAMES = ("wls-data", "wls-data-adultbmi")
-
 DATA_CATALOGS = {
     "regression": {
-        data_name: {
-            sex_name: DataCatalog(name=f"{data_name}-{sex_name}")
-            for sex_name in SEX_NAMES
-        }
-        for data_name in DATA_NAMES
+        "missreg": DataCatalog(name="missreg"),
+        "raw": DataCatalog(name="raw"),
     },
     "simulation": DataCatalog(name="MC"),
 }
 
 
+class Dataset(NamedTuple):
+    name: str
+
+    @property
+    def path(self) -> Path:
+        return DATA / "missreg" / f"{self.name}.dta"
+
+    @property
+    def independent_variables(self) -> list[str]:
+        if self.name == "wls-data":
+            return ["bmirating", "iq", "bmimissing", "constant"]
+        return ["bmirating", "iq", "educ", "bmimissing", "constant"]
+
+    @property
+    def dependent_variable(self) -> str:
+        if self.name == "wls-data":
+            return "educ"
+        return "adultbmi"
+
+
+class Sex(NamedTuple):
+    name: str
+
+
+DATASETS = [Dataset("wls-data"), Dataset("wls-data-adultbmi")]
+SEXES = [Sex("male"), Sex("not-male")]
+
+
+class Experiment(NamedTuple):
+    dataset: Dataset
+    sex: Sex
+    methods: tuple[str]
+
+    @property
+    def name(self) -> str:
+        return f"{self.sex.name}-{self.dataset.name}"
+
+    @property
+    def complete_model_name(self) -> str:
+        return f"complete-{self.name}"
+
+    @property
+    def dummy_model_name(self) -> str:
+        return f"dummy-{self.name}"
+
+    @property
+    def gmm_model_name(self) -> str:
+        return f"gmm-{self.name}"
+
+
+EXPERIMENTS = [
+    Experiment(dataset, sex, ("complete", "dummy", "gmm"))
+    for dataset in DATASETS
+    for sex in SEXES
+]
+
+
 __all__ = [
-    "pd",
-    "DATA",
-    "DOCUMENTS",
     "BLD",
+    "DATA",
+    "DATA_CATALOGS",
+    "DOCUMENTS",
+    "EXPERIMENTS",
     "MC_DESIGNS",
+    "pd",
     "ROOT",
     "SRC",
     "TEST_DIR",
-    "DATA_CATALOGS",
 ]

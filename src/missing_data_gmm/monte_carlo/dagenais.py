@@ -3,12 +3,11 @@
 import numpy as np
 
 
-def dagenais_weighted_method(data, params):
+def dagenais_weighted_method(data):
     """Apply the weighted Dagenais (FGLS) estimation method.
 
     Parameters:
         data (dict): Generated data from `_generate_data`.
-        params (dict): Simulation parameters.
 
     Returns:
         dict: Results containing coefficients and standard errors.
@@ -63,7 +62,7 @@ def dagenais_weighted_method(data, params):
     residuals_combined = y_combined - w_combined @ beta_weighted
     sigma_squared_combined = (
         residuals_combined.T @ weight_combined @ residuals_combined
-    ) / params["n_observations"]
+    ) / data["n_observations"]
     standard_errors = np.sqrt(
         np.diag(
             sigma_squared_combined

@@ -93,6 +93,7 @@ pyyaml = "*"
 statsmodels = "*"
 toml = "*"
 pip = ">=24.3.1,<25"
+scikit-learn = ">=1.6.1,<2"
 
 # Development Dependencies (pypi)
 # --------------------------------------------------------------------------------------
@@ -146,6 +147,7 @@ fix = true
 "tests/*" = ["D", "PD011"]
 "**/task.py" = ["ANN"]
 "**/config.py" = ["FBT003"] # modern pandas settings
+"**/monte_carlo/gmm.py" = ["FBT002"] # bool on returning descriptive statistics
 "**/monte_carlo/helper.py" = ["ERA001", "PLR0911"] # commented-out replication code and match-case of MC_DESIGN
 
 [tool.ruff.lint.pydocstyle]

@@ -3,12 +3,11 @@
 import numpy as np
 
 
-def dummy_variable_method(data, params):
+def dummy_variable_method(data):
     """Dummy variable method estimation.
 
     Args:
         data (dict): Dictionary containing the complete and missing data.
-        params (dict): Dictionary containing the parameters.
 
     Returns:
         dict: Dictionary containing the estimated coefficients and standard errors.
@@ -26,7 +25,7 @@ def dummy_variable_method(data, params):
 
     # Calculate standard errors
     residuals = data["y"] - w_dummy @ beta_hat
-    sigma_squared = residuals.T @ residuals / params["n_observations"]
+    sigma_squared = residuals.T @ residuals / data["n_observations"]
     se_beta_hat = np.sqrt(np.diag(sigma_squared * np.linalg.inv(w_dummy.T @ w_dummy)))
 
     return {"coefficients": beta_hat, "standard_errors": se_beta_hat}
