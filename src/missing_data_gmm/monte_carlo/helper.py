@@ -12,8 +12,6 @@ from missing_data_gmm.monte_carlo.gmm import gmm_method
 
 def _get_design_parameters(design: int) -> list:
     match design:
-        case 0:
-            return [np.array([1]), np.array([1, 1, 1]), np.array([1, 1]), False]
         case 1:
             return [np.array([1]), np.array([10, 0, 0]), np.array([10, 0]), False]
         case 2:
