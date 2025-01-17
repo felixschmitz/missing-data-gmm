@@ -1,75 +1,186 @@
 \documentclass[aspectratio=1610]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\title{Latex Beamer Bonn Style}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{bbm}
+\usepackage[
+    natbib=true,
+    bibencoding=inputenc,
+    bibstyle=authoryear-ibid,
+    citestyle=authoryear-comp,
+    maxcitenames=3,
+    maxbibnames=10,
+    useprefix=false,
+    sortcites=true,
+    backend=biber
+]{biblatex}
+\addbibresource{refs.bib}
+\title{A GMM approach for dealing with missing data on regressors}
+\subtitle{Dummy variable method, weak power and real world application}
 \date{\today}
-\author{Author}
+\author{Felix Schmitz}
 
 \usetheme{UniBonn}
 
 \begin{document}
-	\begin{frame}[plain]
+\usebeamertemplate{custom equation spacing}
+
+\begin{frame}[plain]
 	\titlepage
 \end{frame}
 
 \begin{framecontent}
 	\frametitle{Table of contents}
-	\framesubtitle{How to use the University of Bonn beamer style}
 \end{framecontent}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Model Setup}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\section{Blocks and enumerations}
 \begin{frame}
-\frametitle{Blocks and enumerations}
-\framesubtitle{How to use}
-\begin{block}{A block}
-	This is the block content.
-\end{block}
-\begin{theorem}
-	Some theorem \end{theorem}
-\begin{enumerate}
-	\item<1-| alert@1> Some enumeration with subitems
-	\begin{enumerate}
-		\item Subitem
-	\end{enumerate}
-	\item<2-> Second item
-	\item<3-> Third item
-\end{enumerate}
+    \frametitle{Model setup (revisited)}
+    \begin{itemize}
+        \item<1-> Consider the standard linear regression model:
+
+        \begin{equation}\label{eq:1}
+            y_i = \alpha_0 x_i + z_i^{\prime} \beta_0 + \epsilon_i, \quad i= 1,\ldots,n \text{where } \quad \mathbb{E}[x_i \epsilon_i] = 0, \mathbb{E}[z_i \epsilon_i] = 0
+        \end{equation}
+
+        \item<2-> $x_i$ is a (possibly missing) scalar regressor (\( m_i = \mathbbm{1}\{x_i \text{ missing}\} \)).
+		\item<2-> $z_i$ contains an intercept and further instrument(s).
+        \item<2-> As before, assume a linear projection of $x_i$ onto $z_i$:
+        \begin{equation}\label{eq:2}
+            x_i = z_i^{\prime} \gamma_0 + \xi_i \quad \text{ where } \mathbb{E}[z_i \xi_i] = 0
+        \end{equation}
+
+        \item<3-> $\gamma_0$ determines the strength of the relationship between $x_i$ and $z_i$.
+        \item<3-> Plugging equation \eqref{eq:1} into \eqref{eq:2} yields:
+        \begin{equation}\label{eq:3}
+            y_i = z_i^{\prime} (\gamma_0 \alpha_0 + \beta_0) + \epsilon_i + \xi_i \alpha_0
+        \end{equation}
+    \end{itemize}
 \end{frame}
 
-\section{Items}
-\begin{frame}{Items}
-\begin{itemize}
-\item First item
-\item Second item
-\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Dummy Variable Method}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+	\frametitle{Dummy Variable Method}
+	\framesubtitle{$\ldots$ and resulting problems}
+	\begin{itemize}
+		\item saw complete data, linear imputation and GMM;
+		\item implementation:
+		\begin{itemize}
+			\item replace missing data with $0$'s (or any other constant, e.g. $\bar{x}$)
+			\item include dummy variable indicating missingness
+		\end{itemize}
+		\item down-sides:
+		\begin{itemize}
+			\item generally inconsistent method
+			\item additional assumption of MCAR does not guarantee consistency
+			\item consistency only guaranteed in implausible cases
+			\item efficiency gains in comparison to complete data method not guaranteed
+		\end{itemize}
+		\item up-sides:
+		\begin{itemize}
+			\item easy to implement
+			\item retain sample size
+		\end{itemize}
+		\item mentioned for educational purposes; not recommended for practical use
+	\end{itemize}
 \end{frame}
 
-\begin{frameverticalcontent}
-	\frametitle{Table of contents}
-	\framesubtitle{The content of the presentation}
-\end{frameverticalcontent}
+\begin{frame}
+	\frametitle{Dummy Variable Method}
+	\framesubtitle{$\ldots$ theoretical bias and inconsistency}
+	\begin{itemize}
+		\item<1-> Imputation model \eqref{eq:2} and missing indicator $m_i$ yield:
+		\begin{equation}\label{eq:4}
+            (1-m_i)x_i = (1-m_i) z_i^{\prime} \gamma_0 + (1-m_i)\xi_i
+        \end{equation}
 
-\section{Other types of frames}
+		\item<2-> Combining \eqref{eq:1} and \eqref{eq:4}:
+		\begin{equation}\label{eq:5}
+            y_i = \underbrace{(1-m_i) \alpha_0 x_i + z_i^{\prime} \beta_0}_{\substack{
+				y_i \text{ from \eqref{eq:1} for}\\
+				\text{non-missing } (m_i = 0)\\
+				x_i \text{-values}}} +
+				\underbrace{m_i z_i^{\prime} \gamma_0 \alpha_0}_{\substack{
+					y_i \text{ correction from \eqref{eq:2}}\\
+					\text{for missing } (m_i = 1)\\
+					x_i \text{-values}}} +
+				\underbrace{\epsilon_i}_{\substack{
+					\text{error term}\\
+					\text{from } \eqref{eq:1}}} +
+				\underbrace{m_i \xi_i \alpha_0}_{\substack{
+					\text{error term correction}\\
+					\text{for imputations in \eqref{eq:2}}}}
+		\end{equation}
 
-\begin{framecenter}
-	\frametitle{Centered Title}
-	\framesubtitle{This is a frame with centered title}
-\end{framecenter}
+		\item<3-> Separating components of $z_i$, $\gamma_0$ (intercept, $\gamma_{10}$; instrument $z_{2i}$, $\gamma_{20}$):
+		\begin{equation}\label{eq:6}
+			y_i = (1-m_i) \alpha_0 x_i + z_i^{\prime} \beta_0 + m_i \gamma_{10} \alpha_0 + m_i z_{2i}^{\prime} \gamma_{20} \alpha_0 + \epsilon_i + m_i \xi_i \alpha_0
+		\end{equation}
+		\item<4-> The dummy variable method is equivalent to running the regression without including the regressors $m_i z_{2i}^{\prime}$
+		\item<4-> The estimators are $(\hat{\alpha}_{DM}, \hat{\beta}_{DM})^{\prime}$ based on running the regression in \eqref{eq:6}
+	\end{itemize}
+\end{frame}
 
-\begin{framevertical}
-	\frametitle{Vertical Frame}
-	\framesubtitle{A frame with vertical boxes}
-\end{framevertical}
+\begin{frame}
+	\frametitle{Dummy Variable Method}
+	\framesubtitle{$\ldots$ theoretical bias and inconsistency (continued)}
+	\begin{itemize}
+		\item<1-> The estimators $(\hat{\alpha}_{DM}, \hat{\beta}_{DM})^{\prime}$ are biased and inconsistent, unless
+		\begin{enumerate}
+			\item<2-> $\alpha_0 = 0$
+			\begin{itemize}
+				\item<2-> $x_i$ is an irrelevant variable in the regression \eqref{eq:1}
+				\item<2-> drop $x_i$ from the regression to fix missing-data problem
+			\end{itemize}
+			\item<3-> $\gamma_{20} = 0$
+			\begin{itemize}
+				\item<3-> $z_{2i}$ is not useful under imputation model \eqref{eq:2} to predict $x_i$
+				\item<3-> highly unlikely in practice
+			\end{itemize}
+		\end{enumerate}
+		\item<4-> Further, efficiency gains from the dummy variable method are not guaranteed.
+	\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Monte Carlo Analysis}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+	\frametitle{Irrelevant variable with missing data}
+	Design 2 is of high interest, as it lowers the relevance of the X's on the Y's in the large equation. That is, $\alpha_0$ is lower than in other cases. Do I need to add something regarding small gamma values here as well?
+
+	$alpha_0 = 0.1$
+\end{frame}
+\begin{frame}
+    \input{../bld/tables/simulation_results_design2.tex}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Instrument with low explanatory power for imputation}
+	$\gamma_{20}$ choose some small value
+\end{frame}
+\begin{frame}
+    \input{../bld/tables/simulation_results_design2.tex}
+\end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Real world application}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-\begin{frameblank}
-	Frame without title
-\end{frameblank}
-
+\begin{frame}
+	\frametitle{Real world application}
+    \input{../bld/tables/missreg_results.tex}
+\end{frame}
 
 \end{document}
+
+\printbibliography

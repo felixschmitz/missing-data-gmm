@@ -1,0 +1,24 @@
+\mode<presentation>
+
+\makeatletter
+\defbeamertemplate*{headline}{UniBonn}
+{%
+    % Navigation bar with adjusted padding
+    \begin{beamercolorbox}[wd=\paperwidth,ht=4ex,dp=1.5ex]{section in head/foot}
+        \hspace*{0.5cm} % Left padding
+        \insertnavigation{\dimexpr\paperwidth-1cm\relax} % Reduce width for right padding
+        \hspace*{1cm} % Extra right padding
+    \end{beamercolorbox}
+}
+\setbeamertemplate{headline}[UniBonn]
+\makeatother
+
+% Define Colors for the Navigation Bar
+\setbeamercolor{section in head/foot}{fg=white,bg=blue!80!black} % Section style
+\setbeamercolor{subsection in head/foot}{fg=white,bg=blue!70!black} % Subsection style
+
+% Remove Navigation Symbols
+\setbeamertemplate{navigation symbols}{}
+
+
+\mode<all>
