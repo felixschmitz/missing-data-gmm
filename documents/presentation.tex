@@ -17,7 +17,7 @@
 ]{biblatex}
 \addbibresource{refs.bib}
 \title{A GMM approach for dealing with missing data on regressors}
-\subtitle{Dummy variable method, weak power and real world application}
+\subtitle{Dummy variable method, weak explanatory power and real world application}
 \date{\today}
 \author{Felix Schmitz}
 
@@ -39,23 +39,23 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
-    \frametitle{Model setup (revisited)}
+    \frametitle{Model Setup (revisited)}
     \begin{itemize}
-        \item<1-> Consider the standard linear regression model:
+        \item<1-> Consider the \textbf{standard linear regression} model:
 
         \begin{equation}\label{eq:1}
-            y_i = \alpha_0 x_i + z_i^{\prime} \beta_0 + \epsilon_i, \quad i= 1,\ldots,n \text{where } \quad \mathbb{E}[x_i \epsilon_i] = 0, \mathbb{E}[z_i \epsilon_i] = 0
+            y_i = \alpha_0 x_i + z_i^{\prime} \beta_0 + \epsilon_i, \quad i= 1,\ldots,n \quad \text{where }  \mathbb{E}[x_i \epsilon_i] = 0, \mathbb{E}[z_i \epsilon_i] = 0
         \end{equation}
 
-        \item<2-> $x_i$ is a (possibly missing) scalar regressor (\( m_i = \mathbbm{1}\{x_i \text{ missing}\} \)).
-		\item<2-> $z_i$ contains an intercept and further instrument(s).
-        \item<2-> As before, assume a linear projection of $x_i$ onto $z_i$:
+        \item<1-> $x_i$ is a (possibly missing) scalar regressor (\( m_i = \mathbbm{1}\{x_i \text{ missing}\} \)).
+		\item<1-> $z_i$ contains an intercept and further instrument(s).
+        \item<2-> As before, assume a \textbf{linear projection} of $x_i$ onto $z_i$:
         \begin{equation}\label{eq:2}
             x_i = z_i^{\prime} \gamma_0 + \xi_i \quad \text{ where } \mathbb{E}[z_i \xi_i] = 0
         \end{equation}
 
         \item<3-> $\gamma_0$ determines the strength of the relationship between $x_i$ and $z_i$.
-        \item<3-> Plugging equation \eqref{eq:1} into \eqref{eq:2} yields:
+        \item<3-> Plugging equation \eqref{eq:2} into \eqref{eq:1} yields:
         \begin{equation}\label{eq:3}
             y_i = z_i^{\prime} (\gamma_0 \alpha_0 + \beta_0) + \epsilon_i + \xi_i \alpha_0
         \end{equation}
@@ -70,25 +70,25 @@
 	\frametitle{Dummy Variable Method}
 	\framesubtitle{$\ldots$ and resulting problems}
 	\begin{itemize}
-		\item saw complete data, linear imputation and GMM;
-		\item implementation:
+		\item<1-> saw complete data, linear imputation and GMM;
+		\item<2-> implementation:
 		\begin{itemize}
-			\item replace missing data with $0$'s (or any other constant, e.g. $\bar{x}$)
-			\item include dummy variable indicating missingness
+			\item<2-> replace missing data with $0$'s (or any other constant, e.g. $\bar{x}$)
+			\item<2-> include dummy variable indicating missingness
 		\end{itemize}
-		\item down-sides:
+		\item<3-> down-sides:
 		\begin{itemize}
-			\item generally inconsistent method
-			\item additional assumption of MCAR does not guarantee consistency
-			\item consistency only guaranteed in implausible cases
-			\item efficiency gains in comparison to complete data method not guaranteed
+			\item<3-> generally inconsistent method
+			\item<3-> additional assumption of MCAR does not guarantee consistency
+			\item<3-> consistency only guaranteed in implausible cases
+			\item<3-> efficiency gains in comparison to complete data method not guaranteed
 		\end{itemize}
-		\item up-sides:
+		\item<4-> up-sides:
 		\begin{itemize}
-			\item easy to implement
-			\item retain sample size
+			\item<4-> easy to implement
+			\item<4-> retain sample size
 		\end{itemize}
-		\item mentioned for educational purposes; not recommended for practical use
+		\item<5-> mentioned for educational purposes; not recommended for practical use
 	\end{itemize}
 \end{frame}
 
@@ -96,13 +96,8 @@
 	\frametitle{Dummy Variable Method}
 	\framesubtitle{$\ldots$ theoretical bias and inconsistency}
 	\begin{itemize}
-		\item<1-> Imputation model \eqref{eq:2} and missing indicator $m_i$ yield:
+		\item<1-> Combining \eqref{eq:1} and adapted \eqref{eq:2} to imputed missing values:
 		\begin{equation}\label{eq:4}
-            (1-m_i)x_i = (1-m_i) z_i^{\prime} \gamma_0 + (1-m_i)\xi_i
-        \end{equation}
-
-		\item<2-> Combining \eqref{eq:1} and \eqref{eq:4}:
-		\begin{equation}\label{eq:5}
             y_i = \underbrace{(1-m_i) \alpha_0 x_i + z_i^{\prime} \beta_0}_{\substack{
 				y_i \text{ from \eqref{eq:1} for}\\
 				\text{non-missing } (m_i = 0)\\
@@ -119,12 +114,11 @@
 					\text{for imputations in \eqref{eq:2}}}}
 		\end{equation}
 
-		\item<3-> Separating components of $z_i$, $\gamma_0$ (intercept, $\gamma_{10}$; instrument $z_{2i}$, $\gamma_{20}$):
+		\item<2-> Separating components of $z_i$, $\gamma_0$ (intercept, $\gamma_{10}$; instrument $z_{2i}$, $\gamma_{20}$):
 		\begin{equation}\label{eq:6}
 			y_i = (1-m_i) \alpha_0 x_i + z_i^{\prime} \beta_0 + m_i \gamma_{10} \alpha_0 + m_i z_{2i}^{\prime} \gamma_{20} \alpha_0 + \epsilon_i + m_i \xi_i \alpha_0
 		\end{equation}
-		\item<4-> The dummy variable method is equivalent to running the regression without including the regressors $m_i z_{2i}^{\prime}$
-		\item<4-> The estimators are $(\hat{\alpha}_{DM}, \hat{\beta}_{DM})^{\prime}$ based on running the regression in \eqref{eq:6}
+		\item<3-> The dummy variable method is equivalent to running the regression in \eqref{eq:6} without including the regressors $m_i z_{2i}^{\prime}$
 	\end{itemize}
 \end{frame}
 
@@ -146,6 +140,7 @@
 			\end{itemize}
 		\end{enumerate}
 		\item<4-> Further, efficiency gains from the dummy variable method are not guaranteed.
+		\item<4-> Next we are going to test the relevance of explanatory power via small values for $\alpha_0 \text{ and } \gamma_{20}$ in a MC setup.
 	\end{itemize}
 \end{frame}
 
@@ -155,6 +150,8 @@
 
 \begin{frame}
 	\frametitle{Irrelevant variable with missing data}
+	Under MCAR, homoskedasticity
+
 	Design 2 is of high interest, as it lowers the relevance of the X's on the Y's in the large equation. That is, $\alpha_0$ is lower than in other cases. Do I need to add something regarding small gamma values here as well?
 
 	$alpha_0 = 0.1$
