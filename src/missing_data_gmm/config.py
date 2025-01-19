@@ -21,7 +21,7 @@ TEST_DIR = SRC.joinpath("..", "..", "tests").resolve()
 # 0 is the specification of the final paper, 1-8 are from the appendix
 MC_DESIGNS = list(range(1, 9))
 
-METHODS = ["Complete case method", "Dummy case method", "Dagenais (FGLS)", "GMM"]
+METHODS = ["Complete case method", "Dummy case method", "FGLS (Dagenais)", "GMM"]
 
 SEX_NAMES = ("male", "not-male")
 DATA_NAMES = ("wls-data", "wls-data-adultbmi")

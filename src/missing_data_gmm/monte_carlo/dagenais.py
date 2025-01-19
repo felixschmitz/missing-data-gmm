@@ -4,7 +4,7 @@ import numpy as np
 
 
 def dagenais_weighted_method(data, params):
-    """Apply the weighted Dagenais (FGLS) estimation method.
+    """Apply the weighted FGLS (Dagenais) estimation method.
 
     Parameters:
         data (dict): Generated data from `_generate_data`.

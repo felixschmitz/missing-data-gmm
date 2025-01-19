@@ -171,7 +171,7 @@ def apply_method(data, method, params):
         return complete_case_method(data, params)
     if method == "Dummy case method":
         return dummy_variable_method(data, params)
-    if method == "Dagenais (FGLS)":
+    if method == "FGLS (Dagenais)":
         return dagenais_weighted_method(data, params)
     if method == "GMM":
         return gmm_method(data, params)
