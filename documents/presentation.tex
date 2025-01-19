@@ -19,7 +19,7 @@
 \addbibresource{refs.bib}
 \title{A GMM approach for dealing with missing data on regressors}
 \subtitle{Dummy variable method, weak explanatory power and real world application}
-\date{\today}
+\date{January 20, 2025}
 \author{Felix Schmitz}
 
 \usetheme{UniBonn}
@@ -154,23 +154,34 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
-	\frametitle{Irrelevant variable with missing data}
-	Under MCAR, homoskedasticity
-
-	Design 2 is of high interest, as it lowers the relevance of the X's on the Y's in the large equation. That is, $\alpha_0$ is lower than in other cases. Do I need to add something regarding small gamma values here as well?
-
-	$\alpha_0 = 0.1$
+	\frametitle{Monte Carlo Setup}
+	\begin{equation}
+		\begin{aligned}
+			y_i &= \alpha_0 x_i + \beta_1 + \beta_2 z_{2i} + \sigma_{\epsilon}(x_i, z_{2i})u_i, \\
+			x_i &= \gamma_1 + \gamma_2 z_{2i} + \sigma_{\xi}(z_{2i})v_i, \\
+			\sigma_{\epsilon}(x_i, z_{2i}) &= \sqrt{\theta_0 + \theta_1 x_i^2 + \theta_2 z_{2i}^2}, \\
+			\sigma_{\xi}(z_{2i}) &= \sqrt{\delta_0 + \delta_1 z_{2i}^2}, \\
+			u_i, v_i, z_{2i} &\sim \text{i.i.d. } \mathcal{N}(0,1).
+		\end{aligned}
+	\end{equation}
+	\begin{itemize}
+		\item All regression and conditional variance coefficients are set to 1\\
+		$\alpha_0 = \beta_1 = \beta_2 = \gamma_1 = \gamma_2 = \theta_0 = \theta_1 = \theta_2 = \delta_0 = \delta_1 = 1$
+		\item Number of replications: 5,000; Sample size: 400
+		\item This setup introduces slide heteroskedasticity
+		\item MCAR
+	\end{itemize}
 \end{frame}
+
+
 \begin{frame}
-    \input{../bld/tables/simulation_results_design2.tex}
+	\frametitle{Irrelevant variable with missing data ($\alpha_0 = 0.1$)}
+    \input{../bld/tables/simulation_results_design9.tex}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Instrument with low explanatory power for imputation}
-	$\gamma_{20}$ choose some small value
-\end{frame}
-\begin{frame}
-    \input{../bld/tables/simulation_results_design2.tex}
+	\frametitle{Weak instrument for imputation ($\gamma_{20} = 0.1$)}
+    \input{../bld/tables/simulation_results_design10.tex}
 \end{frame}
 
 
@@ -182,12 +193,12 @@
 	\frametitle{Real World Application}
 	\framesubtitle{Wisconsin Longitudinal Study}
 	\begin{itemize}
-		\item<1-> Random sample of individuals who graduated from Wisconsin high schools in 1957
+		\item<1-> Random sample of 1957 Wisconsin high school graduates
 
 		\item<2-> $x_i$: BMI (body mass index) ratings based upon high-school yearbook photos
 		\begin{itemize}
-			\item<2-> independently assessed by raters; can be seen as proxy for (perceived) BMI in high school
-			\item<2-> \textbf{not} MCAR, due to yearbook availability (missingness may covary with school identity)
+			\item<2-> independently assessed by raters; proxy for (perceived) BMI in high school
+			\item<2-> \textbf{not} MCAR; yearbook availability (missingness may covary with school identity)
 			\item<2-> available for 888 of 3,969 men (22.4\%) and 1,107 of 4,276 women (25.9\%)
 		\end{itemize}
 
