@@ -10,28 +10,97 @@ from missing_data_gmm.monte_carlo.dummy import dummy_variable_method
 from missing_data_gmm.monte_carlo.gmm import gmm_method
 
 
-def _get_design_parameters(design: int) -> list:
+def _get_design_parameters(design: int, k_regressors: int) -> list:
     match design:
         case 1:
-            return [np.array([1]), np.array([10, 0, 0]), np.array([10, 0]), False]
+            return [
+                np.array([1]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([10, 0]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([10, 0, 0]),
+                False,
+            ]
         case 2:
-            return [np.array([0.1]), np.array([10, 0, 0]), np.array([10, 0]), False]
+            return [
+                np.array([0.1]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([10, 0]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([10, 0, 0]),
+                False,
+            ]
         case 3:
-            return [np.array([1]), np.array([1, 0, 0]), np.array([10, 0]), False]
+            return [
+                np.array([1]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([10, 0]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([1, 0, 0]),
+                False,
+            ]
         case 4:
-            return [np.array([1]), np.array([1, 0, 1]), np.array([1, 1]), False]
+            return [
+                np.array([1]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([1, 1]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([1, 0, 1]),
+                False,
+            ]
         case 5:
-            return [np.array([1]), np.array([1, 1, 1]), np.array([1, 1]), False]
+            return [
+                np.array([1]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([1, 1]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([1, 1, 1]),
+                False,
+            ]
         case 6:
-            return [np.array([1]), np.array([1, 0, 0]), np.array([1, 0]), False]
+            return [
+                np.array([1]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([1, 0]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([1, 0, 0]),
+                False,
+            ]
         case 7:
-            return [np.array([1]), np.array([1, 0, 1]), np.array([1, 1]), False]
+            return [
+                np.array([1]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([1, 1]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([1, 0, 1]),
+                False,
+            ]
         case 8:
             return [
                 np.array([1]),
-                np.array([0.1, 0.2, 0.1]),
+                np.array([1] * (k_regressors - 1)),
                 np.array([0.1, 0.2]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([0.1, 0.2, 0.1]),
                 True,
+            ]
+        case 9:
+            return [
+                np.array([0.1]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([1, 1]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([1, 1, 1]),
+                False,
+            ]
+        case 10:
+            return [
+                np.array([1]),
+                np.array([1] * (k_regressors - 1)),
+                np.array([1, 1]),
+                np.array([1, 0.1]),
+                np.array([1, 1, 1]),
+                False,
             ]
 
 
@@ -47,7 +116,7 @@ def initialize_replication_params(design: int = 0) -> dict:
     params["n_observations"] = 400  # Number of observations
     params["k_regressors"] = 3  # Number of regressors (including intercept)
     params["lambda_"] = 0.5  # Proportion of observations with missing data
-    params["n_replications"] = 1000  # Number of Monte Carlo replications
+    params["n_replications"] = 5000  # Number of Monte Carlo replications
     params["n_complete"] = int(
         params["n_observations"] * params["lambda_"]
     )  # Number of complete cases
@@ -57,21 +126,19 @@ def initialize_replication_params(design: int = 0) -> dict:
 
     keys = [
         "alpha_coefficients",
-        "theta_coefficients",
+        "beta_coefficients",
         "delta_coefficients",
+        "gamma_coefficients",  # Imputation coefficients
+        "theta_coefficients",
         "exponential",
     ]
-    values = _get_design_parameters(design)
+    values = _get_design_parameters(design, params["k_regressors"])
     params.update(dict(zip(keys, values, strict=False)))
-
-    params["b0_coefficients"] = np.array(
-        [params["alpha_coefficients"][0]] + [1] * (params["k_regressors"] - 1)
+    params["b0_coefficients"] = np.concatenate(
+        [params["alpha_coefficients"], params["beta_coefficients"]]
     )  # True coefficients
-    params["gamma_coefficients"] = np.array(
-        [1] * (params["k_regressors"] - 1)
-    )  # Imputation coefficients
 
-    params["max_iterations"] = 100  # number of max iterations of gmm
+    params["max_iterations"] = 200  # number of max iterations of gmm
     params["random_key"] = 123456
     return params
 
