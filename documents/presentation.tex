@@ -3,6 +3,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{booktabs}
 \usepackage{amsmath}
+\usepackage{graphicx}
 \usepackage{bbm}
 \usepackage[
     natbib=true,
@@ -59,7 +60,11 @@
         \begin{equation}\label{eq:3}
             y_i = z_i^{\prime} (\gamma_0 \alpha_0 + \beta_0) + \epsilon_i + \xi_i \alpha_0
         \end{equation}
+		\item<4-> GMM will allow for overidentification tests to check the validity of the model
     \end{itemize}
+	% complete-case with much higher standard errors for other covariates
+	% as theoretically argued: not much difference in the coefficients and standard errors of x_i
+	% overidentification test: \chi_2^2 distribution leads to p-values not rejectable on standard levels
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,8 +75,8 @@
 	\frametitle{Dummy Variable Method}
 	\framesubtitle{$\ldots$ and resulting problems}
 	\begin{itemize}
-		\item<1-> saw complete data, linear imputation and GMM;
-		\item<2-> implementation:
+		\item<1-> saw complete data, linear imputation and GMM
+		\item<2-> implementation of dummy variable method:
 		\begin{itemize}
 			\item<2-> replace missing data with $0$'s (or any other constant, e.g. $\bar{x}$)
 			\item<2-> include dummy variable indicating missingness
@@ -139,8 +144,8 @@
 				\item<3-> highly unlikely in practice
 			\end{itemize}
 		\end{enumerate}
-		\item<4-> Further, efficiency gains from the dummy variable method are not guaranteed.
-		\item<4-> Next we are going to test the relevance of explanatory power via small values for $\alpha_0 \text{ and } \gamma_{20}$ in a MC setup.
+		\item<4-> Further, efficiency gains from the dummy variable method are not guaranteed
+		\item<4-> Next we are going to test the relevance of explanatory power via small values for $\alpha_0 \text{ and } \gamma_{20}$ in a MC setup
 	\end{itemize}
 \end{frame}
 
@@ -154,7 +159,7 @@
 
 	Design 2 is of high interest, as it lowers the relevance of the X's on the Y's in the large equation. That is, $\alpha_0$ is lower than in other cases. Do I need to add something regarding small gamma values here as well?
 
-	$alpha_0 = 0.1$
+	$\alpha_0 = 0.1$
 \end{frame}
 \begin{frame}
     \input{../bld/tables/simulation_results_design2.tex}
@@ -170,12 +175,42 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Real world application}
+\section{Real World Application}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
-	\frametitle{Real world application}
-    \input{../bld/tables/missreg_results.tex}
+	\frametitle{Real World Application}
+	\framesubtitle{Wisconsin Longitudinal Study}
+	\begin{itemize}
+		\item<1-> Random sample of individuals who graduated from Wisconsin high schools in 1957
+
+		\item<2-> $x_i$: BMI (body mass index) ratings based upon high-school yearbook photos
+		\begin{itemize}
+			\item<2-> independently assessed by raters; can be seen as proxy for (perceived) BMI in high school
+			\item<2-> \textbf{not} MCAR, due to yearbook availability (missingness may covary with school identity)
+			\item<2-> available for 888 of 3,969 men (22.4\%) and 1,107 of 4,276 women (25.9\%)
+		\end{itemize}
+
+		\item<3-> $z_{2i}$: IQ score (recorded in high school)
+
+		\item<4-> $y_i$: completed years of schooling (determined in 1964)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Real World Application}
+	\center
+    \includegraphics[width=0.9\textwidth]{../bld/tables/missreg_results.png}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Further Ideas}
+	\begin{itemize}
+		\item Testing the performance of GMM for different parameter setups (focus on $\alpha_0$ and $\gamma_{20}$)
+		\item Applying the method to real-world panel datasets
+		\item Using Wasserstein GANs to generate more nuanced missing data patterns
+	\end{itemize}
 \end{frame}
 
 \end{document}
