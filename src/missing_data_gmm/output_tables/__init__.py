@@ -1,1 +1,1 @@
-"""Formatting and saving output tables."""
+"""Formatting and saving figures."""
