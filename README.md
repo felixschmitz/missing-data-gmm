@@ -1,5 +1,8 @@
 # missing-data-GMM
 
+Project as part of the course "Research Module in Economics and Statistics" at the
+University of Bonn 2024/25.
+
 Reproducing the method and results of the paper "A GMM approach for dealing with missing
 data on regressors" by Jason Abrevaya and Stephen G. Donald (2017). The paper and
 replication code can be found
