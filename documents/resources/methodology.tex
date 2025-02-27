@@ -1,0 +1,15 @@
+\section{Methodology}
+Assume a standard linear regression model of the form
+
+\begin{equation}\label{eq:1}
+    y_i = \alpha_0 x_i + z_i^{\prime} \beta_0 + \epsilon_i, \quad i= 1,\ldots,n \quad \text{where }  \mathbb{E}[x_i \epsilon_i] = 0, \mathbb{E}[z_i \epsilon_i] = 0
+\end{equation}
+
+where $x_i$ is a (possibly missing) scalar regressor and $z_i$ contains an intercept ($z_{1i}$) and further instrument(s) ($z_{2i}, \ldots$).
+For the sake of simplicity, we assume that $z_i$ has only two columns, i.e. $z_i = (1, z_{2i})$, the intercept and a single (fully-observed and scalar) instrument, besides otherwise specified.
+The missingness of $x_i$ is denoted by $m_i = \mathbbm{1}\{x_i \text{ missing}\}$.
+The required assumptions on the missingness structure can be subsumed to lie between the cases of missing at random (MAR) and missing completely at random (MCAR), where the former is less restrictive or strong than the latter.
+
+\subsection{Generalized Method of Moments}
+
+\subsection{The Dummy Variable Method}
