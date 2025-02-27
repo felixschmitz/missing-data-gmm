@@ -18,7 +18,7 @@ def _format_output_table(data, design):
             ["Estimation Method", "Parameter", "Bias", r"n$\times$Var", "MSE"], axis=1
         )
         .format({col: "{:.3f}" for col in data.select_dtypes(include="number").columns})
-        # .set_caption(f"Monte Carlo Replication Results, Design {design}")
+        .set_caption(f"Monte Carlo Replication Results, Design {design}")
         .to_latex(
             column_format="lcccc",
             label=f"table:MCReplicationResultsDesign{design}",
