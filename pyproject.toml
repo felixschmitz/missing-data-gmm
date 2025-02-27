@@ -7,7 +7,7 @@ name = "missing-data-gmm"
 description = "Implements the GMM algorithm and results from Abrevaya and Donald (2017)."
 requires-python = ">=3.11"
 dependencies = [
-    "pytask",
+    "pytask", "kaleido>=0.1.0.post1,<0.3",
 ]
 dynamic = ["version"]
 classifiers = [
@@ -93,13 +93,13 @@ pyyaml = "*"
 statsmodels = "*"
 toml = "*"
 pip = ">=24.3.1,<25"
+regex = ">=2024.11.6,<2025"
 
 # Development Dependencies (pypi)
 # --------------------------------------------------------------------------------------
 
 [tool.pixi.pypi-dependencies]
 missing_data_gmm = {path = ".", editable = true}
-kaleido = "*"
 pdbp = "*"
 jax = ">=0.4.35,<0.5"
 

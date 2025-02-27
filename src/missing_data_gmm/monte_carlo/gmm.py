@@ -154,23 +154,22 @@ def _calculate_estimates(data, params, weight_matrix, theta_current):
 
 def _calculate_final_coefficients_and_standard_errors(data, params, theta_current):
     beta_final = theta_current[: params["k_regressors"]]
-    residuals_combined = np.concatenate(
+    lm_residuals_combined = np.concatenate(
         [
             data["y_complete"] - data["w_complete"] @ beta_final,
             data["y_missing"] - data["z_missing"] @ beta_final[1:],
         ]
     )
-    sigma_squared = (residuals_combined.T @ residuals_combined) / params[
-        "n_observations"
-    ]
-    standard_errors = np.sqrt(
+    beta_standard_errors = np.sqrt(
         np.diag(
-            sigma_squared * np.linalg.inv(data["w_complete"].T @ data["w_complete"])
+            (lm_residuals_combined.T @ lm_residuals_combined)
+            / params["n_observations"]
+            * np.linalg.inv(data["w_complete"].T @ data["w_complete"])
         )
     )
     return {
         "coefficients": beta_final,
-        "standard_errors": standard_errors,
+        "standard_errors": beta_standard_errors,
     }
 
 

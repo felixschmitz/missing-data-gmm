@@ -6,11 +6,13 @@ import numpy as np
 import pandas as pd
 from pytask import task
 
-from missing_data_gmm.config import DATA_CATALOGS, MC_DESIGNS, METHODS
-from missing_data_gmm.monte_carlo.helper import (
+from missing_data_gmm.config import DATA_CATALOGS, METHODS
+from missing_data_gmm.monte_carlo.general_helper import (
     apply_method,
     generate_data,
-    initialize_replication_params,
+)
+from missing_data_gmm.monte_carlo.pdf_helper import (
+    initialize_params,
     results_statistics,
 )
 
@@ -44,13 +46,13 @@ def _error_handling_params(params: dict):
         isinstance(params[key], np.ndarray)
         for key in [
             "alpha_coefficients",
-            "b0_coefficients",
+            "beta_coefficients",
             "delta_coefficients",
             "gamma_coefficients",
             "theta_coefficients",
         ]
     ):
-        msg = """Parameters alpha_coefficients, b0_coefficients, delta_coefficients,
+        msg = """Parameters alpha_coefficients, beta_coefficients, delta_coefficients,
         gamma_coefficients, and theta_coefficients must be numpy arrays."""
         raise ValueError(msg)
     if not isinstance(params["methods"], list):
@@ -66,13 +68,32 @@ def _error_handling(params: dict):
     _error_handling_params(params)
 
 
-for design in MC_DESIGNS:
-    params = initialize_replication_params(design)
+def _generate_grid_params() -> dict:
+    grid_params = {}
 
-    @task(id=str(design))
-    def task_simulate(
+    alpha = np.array([1])
+    betas = np.array([1, 1])
+    deltas = np.array([1, 1])
+    thetas = np.array([1, 1, 1])
+
+    for grid_id, gamma_20 in enumerate(np.arange(-1, 1.1, 0.1)):
+        gammas = np.array([1, gamma_20])
+        grid_params[grid_id] = initialize_params(
+            alphas=alpha, betas=betas, deltas=deltas, gammas=gammas, thetas=thetas
+        )
+    return grid_params
+
+
+GRID_PARAMS = _generate_grid_params()
+
+for grid_id, params in GRID_PARAMS.items():
+
+    @task(id=str(grid_id))
+    def task_simulate_grid(
         params: Annotated[dict, params],
-    ) -> Annotated[pd.DataFrame, DATA_CATALOGS["simulation"][f"MC_RESULTS_{design}"]]:
+    ) -> Annotated[
+        pd.DataFrame, DATA_CATALOGS["simulation"][f"MC_weak_gamma_GRID_{grid_id}"]
+    ]:
         """Run Monte Carlo simulation for different methods.
 
         Parameters:
@@ -89,4 +110,6 @@ for design in MC_DESIGNS:
             data = generate_data(params, rng)
             for method in params["methods"]:
                 results[method].append(apply_method(data, method, params))
-        return results_statistics(results, params)
+        data = results_statistics(results, params)
+        data["gamma_20"] = params["gamma_coefficients"][1]
+        return data
