@@ -36,7 +36,7 @@ def task_plot(
 
 
 def _get_sorted_grid_keys(grid_name: str) -> list:
-    keys = [key for key in DATA_CATALOGS["simulation"]._entries if grid_name in key] # noqa: SLF001
+    keys = [key for key in DATA_CATALOGS["simulation"]._entries if grid_name in key]  # noqa: SLF001
     return sorted(keys, key=lambda s: int(re.search(r"\d+$", s).group()))
 
 
