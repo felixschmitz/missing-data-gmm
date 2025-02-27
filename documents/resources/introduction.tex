@@ -1,11 +1,25 @@
 \section{Introduction}
-Missing data on regressors is a typical problem for empiricists.
-Not only ignoring this constitution of the data can lead to biased and inconsistent estimates, but also using faulty and theoretically inadequate methods.
-This paper aims to replicate the results of \cite{abrevaya2017}, which facilitate the Generalized Method of Moments to achieve efficiency gains upon commonly used methods on missing data by empiricists.
-In addition to the replication, the aim is to study the behavior of the GMM approach in a variety of settings.
-% such as different sample sizes, missing data mechanisms, and the number of regressors.
-Further, the analysis is extended with a focus on the dummy variable imputation method, which is widely used in empirical research.
-The goal is to provide a comprehensive comparison of the GMM approach and the dummy variable method in terms of bias, efficiency, and consistency, study the nature of the imputation model, and underline the relevance of applicable methods to achieve sound empirical recommendations.
-The paper is structured as follows: Section 2 provides a literature review on the topic of missing data on regressors, Section 3 introduces the methodology of the GMM approach and the dummy variable method,
-% further linking to the IV estimator,
-Section 4 presents diverse and in-depth Monte Carlo simulations, Section 5 discusses an empirical application, and Section 6 concludes.
+Missing data on regressors is a common and challenging issue in empirical research, often arising due to measuring errors such as survey non-response, attrition, or data entry errors.
+Ignoring this feature of the data or using theoretically inadequate methods can  to biased and inconsistent estimates, undermining the validity of empirical findings.
+There are three most commonly used methods to address missing data.
+Firstly, the complete data method, where observations with missing data are simply dropped. This reduces the sample size, and hence provides less efficient estimates.
+Secondly, linear imputation method, that facilitates an imputation model to fill in missing values, and hence overcome the smaller sample size problem of the complete data method.
+Thirdly, the dummy variable method, which fills the missing values with a constant and includes a dummy variable to account for the missingness.
+The dummy variable method is widely used in empirical research due to its simplicity and ease of implementation.
+
+
+This paper will focus on the dummy variable method and compare it with the Generalized Method of Moments (GMM) approach. First the results of \cite{abrevaya2017} are replicated, which introduced a GMM approach designed to handle missing data. The method potentially achieves efficiency gains over all three widespread methods in the presence of missing data.
+GMM is particularly appealing due to its flexibility in accommodating complex data structures and its ability to exploit moment conditions efficiently.
+
+In addition to the replication, this study examines the performance of the GMM approach across a variety of settings
+%, including different sample sizes, missing data mechanisms, and the number of regressors
+.
+Further, the analysis is extended by focusing on the dummy variable imputation method, and especially on the imputation model.
+Despite its popularity, the dummy variable method is often criticized for leading to biased estimates and inconsistencies, especially under non-ignorable missingness.
+This paper provides a comprehensive comparison of the GMM approach and the dummy variable method in terms of bias, efficiency, and consistency, with the aim to enhance empirical practice and offer sound methodological recommendations.
+
+The rest of the paper is structured as follows.
+Section 2 reviews the literature on missing data methods for regressors.
+while Section 3 introduces the methodology, detailing the GMM approach and the dummy variable method, Section 4 presents diverse and in-depth Monte Carlo simulations to compare the two methods and highlight the theoretical results.
+Section 5 discusses an empirical application, and
+Section 6 concludes with a summary of findings and implications for empirical research.
