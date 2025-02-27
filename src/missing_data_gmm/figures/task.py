@@ -13,26 +13,38 @@ from pytask import task
 
 from missing_data_gmm.config import BLD, DATA_CATALOGS
 
-GRID_SUBNAME = "MC_weak_gamma"
+GRID_SUBNAMES = [
+    "gamma20_homoskedastic",
+    "gamma20_heteroskedastic_imputation",
+    "gamma20_heteroskedastic_regression",
+]
+
+for GRID_SUBNAME in GRID_SUBNAMES:
+
+    @task(id=GRID_SUBNAME)
+    @pytask.mark.after("task_simulate_grid")
+    def task_plot(
+        raw_statistics: Annotated[pytask.DataCatalog, DATA_CATALOGS["simulation"]],
+        grid_subname: str = GRID_SUBNAME,
+    ):
+        """Create a figure from simulation results.
+
+        Parameters:
+            raw_statistics (pytask.DataCatalog): DataCatalog with simulation results.
+            grid_subname (str): Subname of the grid.
+        """
+        return pio.write_image(
+            _create_figure(raw_statistics, grid_subname),
+            BLD / "figures" / f"simulation_results_{grid_subname}.png",
+            width=3 * 300,
+            height=1.25 * 300,
+        )
 
 
-@task(id=GRID_SUBNAME)
-def task_plot(
-    raw_statistics: Annotated[pytask.DataCatalog, DATA_CATALOGS["simulation"]],
-    grid_subname: str = GRID_SUBNAME,
-):
-    """Create a figure from simulation results.
-
-    Parameters:
-        raw_statistics (pytask.DataCatalog): DataCatalog with simulation results.
-        grid_subname (str): Subname of the grid.
-    """
-    return pio.write_image(
-        _create_figure(raw_statistics, grid_subname),
-        BLD / "figures" / "simulation_results_gamma20_GRID.png",
-        width=3 * 300,
-        height=1.25 * 300,
-    )
+def _create_figure(data_catalog: pytask.DataCatalog, s: str) -> go.Figure:
+    sorted_keys = _get_sorted_grid_keys(s + "_GRID_")
+    data = _merge_results(data_catalog, sorted_keys)
+    return _format_figure(data)
 
 
 def _get_sorted_grid_keys(grid_name: str) -> list:
@@ -136,9 +148,3 @@ def _format_figure(data: pd.DataFrame) -> go.Figure:
         matches="y",
     )
     return fig
-
-
-def _create_figure(data_catalog: pytask.DataCatalog, s: str) -> go.Figure:
-    sorted_keys = _get_sorted_grid_keys(s + "_GRID_")
-    data = _merge_results(data_catalog, sorted_keys)
-    return _format_figure(data)

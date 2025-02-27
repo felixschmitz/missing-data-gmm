@@ -9,7 +9,9 @@ from pytask_latex import compilation_steps as cs
 from missing_data_gmm.config import BLD, DOCUMENTS, ROOT
 
 figures = [
-    "simulation_results_gamma20_GRID.png",
+    "simulation_results_gamma20_heteroskedastic_regression.png",
+    "simulation_results_gamma20_heteroskedastic_imputation.png",
+    "simulation_results_gamma20_homoskedastic.png",
 ]
 
 input_files = [

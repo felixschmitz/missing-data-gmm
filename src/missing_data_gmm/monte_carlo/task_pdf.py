@@ -68,13 +68,11 @@ def _error_handling(params: dict):
     _error_handling_params(params)
 
 
-def _generate_grid_params() -> dict:
+def _generate_grid_params(deltas: np.ndarray, thetas: np.ndarray) -> dict:
     grid_params = {}
 
     alpha = np.array([1])
     betas = np.array([1, 1])
-    deltas = np.array([1, 1])
-    thetas = np.array([1, 1, 1])
 
     for grid_id, gamma_20 in enumerate(np.arange(-1, 1.1, 0.1)):
         gammas = np.array([1, gamma_20])
@@ -84,32 +82,49 @@ def _generate_grid_params() -> dict:
     return grid_params
 
 
-GRID_PARAMS = _generate_grid_params()
+ERROR_STRUCTURE = {
+    "homoskedastic": {"deltas": np.array([10, 0]), "thetas": np.array([10, 0, 0])},
+    "heteroskedastic_imputation": {
+        "deltas": np.array([1, 1]),
+        "thetas": np.array([1, 0, 1]),
+    },
+    "heteroskedastic_regression": {
+        "deltas": np.array([1, 1]),
+        "thetas": np.array([1, 1, 1]),
+    },
+}
 
-for grid_id, params in GRID_PARAMS.items():
+for error_name, (deltas, thetas) in ERROR_STRUCTURE.items():
+    GRID_PARAMS = _generate_grid_params(deltas, thetas)
 
-    @task(id=str(grid_id))
-    def task_simulate_grid(
-        params: Annotated[dict, params],
-    ) -> Annotated[
-        pd.DataFrame, DATA_CATALOGS["simulation"][f"MC_weak_gamma_GRID_{grid_id}"]
-    ]:
-        """Run Monte Carlo simulation for different methods.
+    for grid_id, params in GRID_PARAMS.items():
 
-        Parameters:
-            params (dict): Simulation parameters.
-            random_key (int): Random seed for reproducibility.
+        @task(id=f"{error_name}_{grid_id}")
+        def task_simulate_grid(
+            params: Annotated[dict, params],
+            error_name: Annotated[str, error_name],  # noqa: ARG001
+            grid_id: Annotated[int, grid_id],  # noqa: ARG001
+        ) -> Annotated[
+            pd.DataFrame,
+            DATA_CATALOGS["simulation"][f"MC_gamma20_{error_name}_GRID_{grid_id}"],
+        ]:
+            """Run Monte Carlo simulation for different methods.
 
-        Returns:
-            pd.DataFrame: Formatted simulation results.
-        """
-        _error_handling(params)
-        rng = np.random.default_rng(params["random_key"])
-        results = {method: [] for method in params["methods"]}
-        for _replication in range(params["n_replications"]):
-            data = generate_data(params, rng)
-            for method in params["methods"]:
-                results[method].append(apply_method(data, method, params))
-        data = results_statistics(results, params)
-        data["gamma_20"] = params["gamma_coefficients"][1]
-        return data
+            Parameters:
+                params (dict): Simulation parameters.
+                error_name (str): Name of the error structure.
+                grid_id (int): ID of the grid.
+
+            Returns:
+                pd.DataFrame: Formatted simulation results.
+            """
+            _error_handling(params)
+            rng = np.random.default_rng(params["random_key"])
+            results = {method: [] for method in params["methods"]}
+            for _replication in range(params["n_replications"]):
+                data = generate_data(params, rng)
+                for method in params["methods"]:
+                    results[method].append(apply_method(data, method, params))
+            data = results_statistics(results, params)
+            data["gamma_20"] = params["gamma_coefficients"][1]
+            return data

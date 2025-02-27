@@ -1,15 +1,63 @@
 \section{Methodology}
 Assume a standard linear regression model of the form
-
 \begin{equation}\label{eq:1}
-    y_i = \alpha_0 x_i + z_i^{\prime} \beta_0 + \epsilon_i, \quad i= 1,\ldots,n \quad \text{where }  \mathbb{E}[x_i \epsilon_i] = 0, \mathbb{E}[z_i \epsilon_i] = 0
+    y_i = \alpha_0 x_i + z_i^{\prime} \beta_0 + \epsilon_i, \quad i= 1,\ldots,n
 \end{equation}
-
 where $x_i$ is a (possibly missing) scalar regressor and $z_i$ contains an intercept ($z_{1i}$) and further instrument(s) ($z_{2i}, \ldots$).
-For the sake of simplicity, we assume that $z_i$ has only two columns, i.e. $z_i = (1, z_{2i})$, the intercept and a single (fully-observed and scalar) instrument, besides otherwise specified.
+Further, we have standard exogeneity assumptions on the error term $\epsilon_i$, that is $\mathbb{E}[x_i \epsilon_i] = 0$ and $\mathbb{E}[z_i \epsilon_i] = 0$.
+Let $w_i \equiv (x_i, z_i)^{\prime}$, and further $\theta_0 \equiv (\alpha_0, \beta_0^{\prime})^{\prime}$.
+Then equation \eqref{eq:1} can be written as $y_i = w_i^{\prime} \theta_0 + \epsilon_i, i= 1,\ldots,n$.
+For the sake of simplicity, we assume that $z_i$ has only two columns, i.e. $z_i = (1, z_{2i})$, the intercept and a single (fully-observed and scalar) instrument, unless otherwise specified.
 The missingness of $x_i$ is denoted by $m_i = \mathbbm{1}\{x_i \text{ missing}\}$.
 The required assumptions on the missingness structure can be subsumed to lie between the cases of missing at random (MAR) and missing completely at random (MCAR), where the former is less restrictive or strong than the latter.
 
+Further, assume a linear projection of $x_i$ onto $z_i$ of the form
+\begin{equation}\label{eq:2}
+    x_i = z_i^{\prime} \gamma_0 + \xi_i
+\end{equation}
+where $\mathbb{E}[z_i \xi_i] = 0$, that is $z_i$ is uncorrelated with the error term $\xi_i$ of this imputation model.
+Plugging equation \eqref{eq:2} into \eqref{eq:1} yields the following model
+\begin{equation}\label{eq:3}
+    y_i = z_i^{\prime} (\gamma_0 \alpha_0 + \beta_0) + \epsilon_i + \xi_i \alpha_0.
+\end{equation}
+
+The relevant missingness assumptions are $\text{a) }\mathbb{E}[m_i z_i \epsilon_i] = 0, \text{b) }\mathbb{E}[m_i z_i \xi_i] = 0, \text{c) }\mathbb{E}[m_i x_i \epsilon_i] = 0$.
+These are central to the identification of the model parameters and the consistency of the GMM estimator.
+The assumption a) is the standard exogeneity assumption of the error term in the regression model \eqref{eq:1}.
+It describes the absence of correlation between the missingness indicator $m_i$ and the error term $\epsilon_i$ and is required for the consistency of the OLS estimator of $\alpha_0$.
+The assumption b) is the exogeneity of the imputation error term $\xi_i$.
+It states that the missingness of $x_i$, $m_i$, is uncorrelated with the imputation error term $\xi_i$.
+Facilitating consistent estimation of $\gamma_0$ in the imputation model \eqref{eq:2}.
+The assumption c) is the exogeneity of the missing regressor $x_i$.
+It states that the missingness of $x_i$ is uncorrelated with the error term $\epsilon_i$ in the regression model \eqref{eq:1}.
+This assumption is required for the consistency of the OLS estimator of $\beta_0$.
+Hence, under these assumptions about the missingness structure, the model parameters $\alpha_0$ and $\beta_0$ in equation \eqref{eq:3} can under the correctly specified imputation model be consistently estimated by OLS.
+
+Recapitulate that the assumptions on the missingness structure are less restrictive than the MCAR assumption, but stronger than the MAR assumption.
+Under MCAR, the missingness of $x_i$, $m_i$, is statistically of all observed variables ($x_i, z_i$) and unobserved variables ($\epsilon_i, \xi_i$).
+This assumption entails the three missingness assumptions a), b), and c) and is thus stronger than the missingness assumptions required for the identification of the model parameters and the consistency of the GMM estimator.
+In contrast to MCAR, the MAR assumption allows the missingness of $x_i$, $m_i$, to depend on the observed variable $z_i$ and the dependent variable $y_i$, but not on the partially missing variable $x_i$.
+This assumption is less restrictive than the missingness assumptions required for the identification of the model parameters and the consistency of the GMM estimator.
+
 \subsection{Generalized Method of Moments}
+The GMM is an estimation technique relying on moment conditions derived from the model assumptions, rather than requiring a fully specified likelihood function.
+The moment conditions are expectations of functions of the observed data and the model parameters.
+These capture the theoretical relationships implied by the model without fully specifying the underlying data distribution.
+The method is particularly useful in econometric models with endogeneity or missing data, as it leverages instrumental variables to identify and consistently estimate model parameters.
+In the context of the regression model specified above through equations \eqref{eq:1}, \eqref{eq:2}, and \eqref{eq:3}, the moment conditions are specified by the following functions $g_i(\alpha, \beta, \gamma)$:
+\begin{equation}\label{eq:4}
+    g_i(\alpha, \beta, \gamma) = \begin{pmatrix}
+        (1-m_i)w_i(y_i - \alpha x_i - z_i^{\prime}\beta) \\
+        (1-m_i)z_i (x_i - z_i^{\prime} \gamma) \\
+        m_i z_i (y_i - z_i^{\prime} (\gamma \alpha + \beta))
+    \end{pmatrix}
+\end{equation}
+and the assumptions on the missing data structure imply that $\mathbb{E}[g_i(\alpha_0, \beta_0, \gamma_0)] = 0$.
+Hence, the number of moment conditions is larger than the dimension of the vector of parameters $(\alpha_0, \beta_0, \gamma_0)$ to estimate, which makes the model overidentified.
+
+The GMM estimator is then obtained by minimizing the sample analog of the quadratic form of the moment conditions, i.e. the sample analog of the expectation of the moment conditions.
+The GMM estimator is consistent and asymptotically normally distributed under standard regularity conditions.
+The GMM estimator is also robust to misspecification of the imputation model, as long as the moment conditions are correctly specified.
+Further, an overidentification test can be used to test the validity of the moment conditions and the model assumptions.
 
 \subsection{The Dummy Variable Method}
