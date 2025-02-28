@@ -16,7 +16,6 @@ figures = [
 
 input_files = [
     "introduction.tex",
-    "literature_review.tex",
     "methodology.tex",
     "mc_simulations.tex",
     "conclusion.tex",
