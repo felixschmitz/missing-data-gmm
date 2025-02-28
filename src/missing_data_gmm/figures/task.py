@@ -43,8 +43,6 @@ for GRID_SUBNAME in GRID_SUBNAMES:
 def _create_figure(data_catalog: pytask.DataCatalog, s: str) -> go.Figure:
     sorted_keys = _get_sorted_grid_keys(s + "_GRID_")
     data = _merge_results(data_catalog, sorted_keys)
-    if "_imputation" in s:
-        data = data[data["Method"] != "Complete case method"]
     return _format_figure(data)
 
 
