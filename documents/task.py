@@ -19,9 +19,7 @@ input_files = [
     "literature_review.tex",
     "methodology.tex",
     "mc_simulations.tex",
-    "empirical_application.tex",
     "conclusion.tex",
-    "appendix.tex",
 ]
 
 tables = [
