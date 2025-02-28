@@ -1,25 +1,35 @@
 \section{Introduction}
-Missing data on regressors is a common and challenging issue in empirical research, often arising due to measuring errors such as survey non-response, attrition, or data entry errors.
-Ignoring this feature of the data or using theoretically inadequate methods can  to biased and inconsistent estimates, undermining the validity of empirical findings.
+Missing data on regressors is a common and challenging issue in empirical research.
+It often arises due to measuring errors such as survey non-response, attrition, or data entry errors.
+Ignoring this feature of the data or using theoretically inadequate methods can lead to biased and inconsistent estimates, undermining the validity of empirical findings.
+\citet{abrevaya2017} show in a survey of 400 empirical papers published between 2006 and 2008 in four leading empirical economics journals (Amerian Economic Review,
+Journal of Human Resources, Journal of Labor Economics, and Quarterly Journal of Economics), nearly 40\% dealt with missing data on regressors.
 There are three most commonly used methods to address missing data.
-Firstly, the complete data method, where observations with missing data are simply dropped. This reduces the sample size, and hence provides less efficient estimates.
+Firstly, the complete data method, where observations with missing data are simply dropped.
+This method reduces the number of observations, and hence provides less efficient estimates.
+It was found the most common method in the survey.
+It has been shown that efficiency gains upon the complete data method stem from the theoretical assumptions made about the missing data structure \citep{dardanoni2011}.
+
 Secondly, linear imputation method, that facilitates an imputation model to fill in missing values, and hence overcome the smaller sample size problem of the complete data method.
+Central to the linear imputation method is the assumption of the correctly specified imputation model holding both for missing and non-missing data \citep{dagenais1973, gourieroux1981}.
+Facilitating these model assumptions, efficiency gains over the complete data method can be achieved.
+The method finds applications in panel data models, where the imputation model not only leverages the cross-sectional variation but also the time-series variation \citep{frick2014}.
+
 Thirdly, the dummy variable method, which fills the missing values with a constant and includes a dummy variable to account for the missingness.
-The dummy variable method is widely used in empirical research due to its simplicity and ease of implementation.
+It has been generally shown that the dummy variable method leads to inconsistent estimates, even when the adequate missing assumptions are met \citep{jones1996}.
+Further, the dummy variable does not guarantee efficiency gains over the complete data method.
+Replacing missing values with a constant, e.g. 0 or the sample mean of the non-missing data, likely leads to biased and hence inconsistent estimates.
 
+The linear imputation and dummy variable methods were found to be used less frequently in the survey than the complete data method, likely due to more complex implementation and potential computational challenges.
+Yet, the dummy variable method is widely used in empirical research due to its simpler theoretical use than the linear imputation framework, as the imputation model is not explicitly specified.
 
-This paper will focus on the dummy variable method and compare it with the Generalized Method of Moments (GMM) approach. First the results of \cite{abrevaya2017} are replicated, which introduced a GMM approach designed to handle missing data. The method potentially achieves efficiency gains over all three widespread methods in the presence of missing data.
+This paper will focus on the dummy variable method and compare it with the Generalized Method of Moments (GMM) approach. First the results of \citet{abrevaya2017} are replicated, which introduced a GMM approach designed to handle missing data. The method potentially achieves efficiency gains over all three widespread methods in the presence of missing data.
 GMM is particularly appealing due to its flexibility in accommodating complex data structures and its ability to exploit moment conditions efficiently.
 
-In addition to the replication, this study examines the performance of the GMM approach across a variety of settings
-%, including different sample sizes, missing data mechanisms, and the number of regressors
-.
 Further, the analysis is extended by focusing on the dummy variable imputation method, and especially on the imputation model.
 Despite its popularity, the dummy variable method is often criticized for leading to biased estimates and inconsistencies, especially under non-ignorable missingness.
 This paper provides a comprehensive comparison of the GMM approach and the dummy variable method in terms of bias, efficiency, and consistency, with the aim to enhance empirical practice and offer sound methodological recommendations.
 
 The rest of the paper is structured as follows.
-Section 2 reviews the literature on missing data methods for regressors.
-while Section 3 introduces the methodology, detailing the GMM approach and the dummy variable method, Section 4 presents diverse and in-depth Monte Carlo simulations to compare the two methods and highlight the theoretical results.
-Section 5 discusses an empirical application, and
-Section 6 concludes with a summary of findings and implications for empirical research.
+while Section 2 introduces the methodology, detailing the GMM approach and the dummy variable method, Section 3 presents diverse and in-depth Monte Carlo simulations to compare the two methods and highlight the theoretical results.
+Section 4 concludes with a summary of findings, implications for empirical research, and potential links to other methods or applications.

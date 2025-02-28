@@ -1,24 +1,109 @@
 \section{Monte Carlo Simulation Studies}
+The following Monte Carlo simulation studies are conducted to compare the performance of the dummy method and the GMM approach in the presence of missing data, and to showcase the robustness of estimates from GMM.
+The simulation studies are designed to replicate the results of \cite{abrevaya2017} and extend the analysis of the dummy method, to highlight the behavior of the results in different settings.
+The data-generating process is as follows:
+\begin{align*}
+    y_i & = \alpha_0 x_i + \beta_{10} + z_i^{\prime} \beta_{20} + \sigma_{\epsilon}(x_i, z_i) u_i \\
+    x_i & = \gamma_{10} + z_i^{\prime} \gamma_{20} + \sigma_{\xi}(z_i) v_i \\
+    \sigma_{\epsilon}(x_i, z_i) & = \sqrt{\theta_0 + \theta_1 x_i^2 + \theta_2 z_i^2} \\
+    \sigma_{\xi}(z_i) & = \sqrt{\delta_0 + \delta_1 z_i^2} \\
+    z_i & \sim N(0, 1)
+\end{align*}
+For all simulations the values parameters are fixed to $(\alpha_0, \beta_{10}, \beta_{20}, \gamma_{10}) = (1,1,1,1)$.
+The value of $\gamma_{20}$ is fixed to $1$ for all simple simulations producing tables, and varied in the more complex grid-based simulations producing figures.
+The missing mechanism is straightforward, in that exactly half of the $x_i$'s are missing, equivalent to a missing completely at random generation.
+The error terms $u_i$ and $v_i$ are generated from a standard normal distribution, where $$u_i, v_i \sim N(0, 1), u_i \bot v_i$$.
+The values of the parameters $\theta_0, \theta_1, \theta_2, \delta_0, \delta_1$ vary throughout the simulations.
+The simulation is repeated 1000 times for each design with a sample size of $n = 400$.
 
-\begin{figure}
+For each design, the following two outputs are provided and analyzed below.
+On the one hand, a table with information on the three parameters $(\alpha_0, \beta_1, \beta_2)$ of Equation \eqref{eq:1} is presented for each of the four estimation methods.
+The parameter of the imputation model \eqref{eq:2} is kept fixed at $\gamma_{20} = 1$ for these simple simulations.
+The four estimation methods are the complete data method, the dummy method, a Feasible Generalized Least Squares (FGLS) estimator based upon \citet{dagenais1973} for the linear imputation method, and the GMM method.
+On the other hand, a grid-based simulation of the relevance of the parameter value $\gamma_{20}$ is conducted, where the parameter is varied from $-1$ to $1$ in steps of $0.1$.
+That is, the values of $\gamma_{20}$, and the Mean Squared Error (MSE) of the parameter estimates $(\beta_1, \beta_2)$ are presented in a figure for the dummy method and the GMM method.
+
+\subsection{Design 1: Homoskedastic Residuals}
+\label{subsec:mc-design1}
+Under this design, the residual parameters are fixed to $((\theta_0, \theta_1, \theta_2), (\delta_0, \delta_1)) = ((10, 0, 0), (10, 0))$, leading to homoskedastic residuals.
+Values for $theta_0$ and $delta_0$ are chosen to be large, distinct the estimates of the different methods.
+The results of this simulation are presented in Table \ref{table:MCReplicationResultsDesign1} and are in line with the theoretical findings in \cite{abrevaya2017}.
+First, the complete data method is an unbiased estimator, but has the highest asymptotic variance.
+Second, the dummy method is biased and inconsistent.
+Third, the linear imputation method yields consistent estimates and has efficiency gains over the complete data method.
+Fourth, the GMM method is consistent and efficient, it has the lowest MSE's among the four methods.
+Under these conditions, the GMM method does not outperform the linear imputation method largely.
+
+\input{../../bld/tables/simulation_results_design1.tex}
+
+Turning to varying values of $\gamma_{20}$, the results are presented in Figure \ref{fig:gamma20_homoskedastic}.
+Focussing on the right panel, displaying the MSE of the GMM method and dummy variable method estimates for $\beta_2$, the MSE first is lower than of the latter for all values of $\gamma_{20}$.
+As the value of $\gamma_{20}$ tends away from zero, the MSE of the dummy method increases substantially, while the MSE of the GMM method remains relatively stable.
+Recall that the dummy variable method is estimating Equation \eqref{eq:7}.
+This explains the diverging behavior of the MSE's, as the dummy variable method suffers from the omitted-variable bias of the instrument for missing observations $m_i z_{2i}^{\prime}$.
+As presented in \ref{subsec:methodology-dummy}, with values of $\gamma_{20} \approx 0$, the dummy method is unbiased and consistent, and hence the MSE is low.
+
+\begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{../../bld/figures/simulation_results_gamma20_GRID}
-    \caption{Simulation results for $\gamma_{20}$ grid.}
-    \label{fig:gamma20_grid}
+    \includegraphics[width=\textwidth]{../bld/figures/simulation_results_gamma20_homoskedastic.png}
+    \caption{MSE of $\gamma_{20}$-grid with homoskedastic residuals}
+    \label{fig:gamma20_homoskedastic}
 \end{figure}
 
-Relevance of $z_{2i}$ under imputation model \eqref{eq:2} to predict $x_i$:
-The dummy method estimators $(\hat{\alpha}_{DM}, \hat{\beta}_{DM})^{\prime}$ are biased and inconsistent, unless
-$\alpha_0 = 0$; $x_i$ irrelevant variable in the regression \eqref{eq:1} (drop $x_i$)
-OR
-$\gamma_{20} = 0$; $z_{2i}$ is not useful under imputation model \eqref{eq:2} to predict $x_i$
+The left panel contains the MSE of estimates of $\beta_1$.
+The MSE for the GMM method is similar as in the right panel, while the MSE of the dummy method is constantly and substantially higher.
+Comparing GMM to the complete data method, the efficiency gains are already are apparent for this simple design.
 
-\input{../../bld/tables/simulation_results_design9.tex}
+\subsection{Design 2: Heteroskedastic Residuals in Imputation Model}
+Under this design, the residual parameters are fixed to $((\theta_0, \theta_1, \theta_2), (\delta_0, \delta_1)) = ((1, 0, 1), (1, 1))$, leading to heteroskedastic residuals, stemming from the heteroskedasticy introduced by the instrument $z_{2i}$.
+The results of this simulation are presented in Table \ref{table:MCReplicationResultsDesign2}.
+Under these conditions, the GMM method performs similar to the linear imputation method.
+Relevant to observe is the relative increase in MSE of parameter $\beta_2$ in comparison to the other two paramters.
+The potential efficiency gains of the dummy variable method are negated by the strong bias.
 
-\input{../../bld/tables/simulation_results_design10.tex}
+\input{../../bld/tables/simulation_results_design2.tex}
 
-\input{../../bld/tables/simulation_results_design5.tex}
+Turning to varying values of $\gamma_{20}$, the results are presented in Figure \ref{fig:gamma20_heteroskedastic_imputation}.
+The results are similar to Figure \ref{fig:gamma20_homoskedastic} in \ref{subsec:mc-design1}.
+Important to notice is the increased MSE of estimates of the dummy method, as the omitted-variable bias becomes more pronounced with increasing values of $\gamma_{20}$.
+Plotting the complete data method under this design is not informative, as the parameter's MSE's explode for values of $\gamma_{20}$ further away from zero.
+This is the result of the complete data method excluding the missing observations, and hence the heteroskedastic variation introduced by the imputation model under this setup.
+Underlining even further the robustness of the GMM method.
 
-Table \ref{table:MCReplicationResultsDesign5} on page \pageref{table:MCReplicationResultsDesign5} refers
-to the simulation presented in the paper, and Table \ref{table:MCReplicationResultsDesign1} on page \pageref{table:MCReplicationResultsDesign1}
-refers to the first design in the appendix.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../bld/figures/simulation_results_gamma20_heteroskedastic_imputation.png}
+    \caption{MSE of $\gamma_{20}$-grid with heteroskedastic residuals (imputation)}
+    \label{fig:gamma20_heteroskedastic_imputation}
+\end{figure}
+
+\subsection{Design 3: Heteroskedastic Residuals in Imputation and Main Model}
+This design is equivalent to the one presented in \citep{abrevaya2017}, and the results are replicated in Table \ref{table:MCReplicationResultsDesign3}.
+The residual parameters are fixed to $((\theta_0, \theta_1, \theta_2), (\delta_0, \delta_1)) = ((1, 1, 1), (1, 1))$, leading to heteroskedastic residuals, not only through the heteroskedasticy introduced by the instrument $z_{2i}$, but also from the potentially missing variable $x_i$.
+This structural change in the residuals leads to a substantial increase in the MSE of the parameters estimated from all methods.
+Driving this increase is the asymptotic variance of the estimates, which mirrors the variance of the residuals.
+The GMM method is now able to outperform all other methods, especially the dummy method at large, which in addition to the persistent bias now also has a high variance.
+The linear imputation method is consistent, but has a higher variance than the GMM method.
+
+\input{../../bld/tables/simulation_results_design3.tex}
+
+Focusing on the results of the grid-based simulation of $\gamma_{20}$ under this design specification, the results in Figure \ref{fig:gamma20_heteroskedastic_regression} add onto the above findings.
+GMM is fairly robust to the heteroskedasticity introduced in the residuals, and still allows for the most efficient estimates.
+These gains start to shrink in contrast to the complete data method for values of $\gamma_{20}$ close to $1$ and $-1$.
+The dummy method, on the other hand, is not able to handle the heteroskedasticity in the residuals, and the MSE's grow further for values of $\gamma_{20}$ distant from zero.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../bld/figures/simulation_results_gamma20_heteroskedastic_regression.png}
+    \caption{MSE of $\gamma_{20}$-grid with heteroskedastic residuals (imputation, regression)}
+    \label{fig:gamma20_heteroskedastic_regression}
+\end{figure}
+
+There is a general tendency of increasing MSE's for estimates of the dummy variable method with progressing designs, stemming from the introduced variation and complexity in the residuals.
+Further, going from homoskedastic residuals in Figure \ref{fig:gamma20_homoskedastic} to heteroskedastic residuals dependent only on imputation model level in Figure \ref{fig:gamma20_heteroskedastic_imputation}, to hetereoskedasticity also in the linear regression model in Figure \ref{fig:gamma20_heteroskedastic_regression}, the curvature of the MSE plots increases.
+The introduced heteroskedasticity in the residuals in designs 2 and 3 leads to increasing curvatures, because as we progress to $\gamma_{20}$ values further away from zero, the omitted-variable bias of the dummy method becomes more pronounced.
+
+The GMM method, on the other hand, remains stable in its performance, with low MSE's for all designs.
+Only the MSE of $\beta_2$ under design 3 grows for values at the boundary (close to $1$ and $-1$) to a similar level as with the large residual parameters in design 1.
+The GMM method is robust to the heteroskedasticity introduced in the residuals, and outperforms the dummy method in all designs.
+The results of the GMM method are in line with the theory of the method and its application to the missing data framework.

@@ -19,7 +19,7 @@
 \usepackage{bbm}
 % \usepackage{endfloat} % Enable to move tables / figures to the end. Useful for some
 % submissions.
-\usepackage[backend=bibtex, style=authoryear]{biblatex}
+\usepackage[backend=bibtex, style=authoryear, natbib]{biblatex}
 
 \addbibresource{refs.bib}
 
@@ -48,7 +48,8 @@
 
 \title{Term Paper on: "A GMM Approach for Dealing With Missing Data on Regressors" \\
 by Jason Abrevaya and Stephen G. Donald \\
-Research Module in Econometrics by Christoph Breunig \\
+Research Module in Econometrics and Statistics \\
+by Christoph Breunig \\
 University of Bonn, Winter Term 2024/25}
 
 \author{Felix Schmitz\footnotemark[1]}
@@ -58,21 +59,17 @@ University of Bonn, Winter Term 2024/25}
 }
 
 \maketitle
-\footnotetext[1]{Email: \href{mailto:s87fschm@uni-bonn.de}{s87fschm@uni-bonn.de}, Matriculation Number: 50173514}
+\footnotetext[1]{Email: \href{mailto:s87fschm@uni-bonn.de}{s87fschm@uni-bonn.de}, Matriculation Number: 50173514, For replication material see \href{https://github.com/felixschmitz/missing-data-gmm}{here}}
 
 \input{resources/introduction.tex}
-
-\input{resources/literature_review.tex}
 
 \input{resources/methodology.tex}
 
 \input{resources/mc_simulations.tex}
 
-\input{resources/empirical_application.tex}
-
 \input{resources/conclusion.tex}
 
-\input{resources/appendix.tex}
+\clearpage
 
 \printbibliography
 

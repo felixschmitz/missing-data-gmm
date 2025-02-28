@@ -25,9 +25,9 @@ input_files = [
 ]
 
 tables = [
-    "simulation_results_design5.tex",
-    "simulation_results_design9.tex",
-    "simulation_results_design10.tex",
+    "simulation_results_design1.tex",
+    "simulation_results_design2.tex",
+    "simulation_results_design3.tex",
 ]
 
 DOCUMENTS_KWARGS = {

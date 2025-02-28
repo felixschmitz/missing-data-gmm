@@ -1,14 +1,14 @@
 \section{Methodology}
 Assume a standard linear regression model of the form
 \begin{equation}\label{eq:1}
-    y_i = \alpha_0 x_i + z_i^{\prime} \beta_0 + \epsilon_i, \quad i= 1,\ldots,n
+    y_i = \alpha_0 x_i + z_i^{\prime} \beta_0 + \epsilon_i = w_i^{\prime} \theta_0 + \epsilon_i, \quad i= 1,\ldots,n
 \end{equation}
-where $x_i$ is a (possibly missing) scalar regressor and $z_i$ contains an intercept ($z_{1i}$) and further instrument(s) ($z_{2i}, \ldots$).
+where $x_i$ is a possibly missing scalar regressor and $z_i$ contains an intercept ($z_{1i}$) and further instrument(s) ($z_{2i}, \ldots$).
 Further, we have standard exogeneity assumptions on the error term $\epsilon_i$, that is $\mathbb{E}[x_i \epsilon_i] = 0$ and $\mathbb{E}[z_i \epsilon_i] = 0$.
 Let $w_i \equiv (x_i, z_i)^{\prime}$, and further $\theta_0 \equiv (\alpha_0, \beta_0^{\prime})^{\prime}$.
-Then equation \eqref{eq:1} can be written as $y_i = w_i^{\prime} \theta_0 + \epsilon_i, i= 1,\ldots,n$.
-For the sake of simplicity, we assume that $z_i$ has only two columns, i.e. $z_i = (1, z_{2i})$, the intercept and a single (fully-observed and scalar) instrument, unless otherwise specified.
-The missingness of $x_i$ is denoted by $m_i = \mathbbm{1}\{x_i \text{ missing}\}$.
+Then Equation \eqref{eq:1} can be written as $y_i = w_i^{\prime} \theta_0 + \epsilon_i, i= 1,\ldots,n$.
+For the sake of simplicity, we assume that $z_i$ has only two columns, i.e. $z_i = (1, z_{2i})$, the intercept and a single fully-observed and scalar instrument, the results are generalizable nevertheless.
+The missingness of $x_i$ is denoted by $$m_i = \mathbbm{1}\{x_i \text{ missing}\}$$.
 The required assumptions on the missingness structure can be subsumed to lie between the cases of missing at random (MAR) and missing completely at random (MCAR), where the former is less restrictive or strong than the latter.
 
 Further, assume a linear projection of $x_i$ onto $z_i$ of the form
@@ -16,28 +16,31 @@ Further, assume a linear projection of $x_i$ onto $z_i$ of the form
     x_i = z_i^{\prime} \gamma_0 + \xi_i
 \end{equation}
 where $\mathbb{E}[z_i \xi_i] = 0$, that is $z_i$ is uncorrelated with the error term $\xi_i$ of this imputation model.
-Plugging equation \eqref{eq:2} into \eqref{eq:1} yields the following model
+Plugging Equation \eqref{eq:2} into \eqref{eq:1} yields the following model
 \begin{equation}\label{eq:3}
-    y_i = z_i^{\prime} (\gamma_0 \alpha_0 + \beta_0) + \epsilon_i + \xi_i \alpha_0.
+    y_i = z_i^{\prime} (\gamma_0 \alpha_0 + \beta_0) + \epsilon_i + \xi_i \alpha_0 .
 \end{equation}
 
-The relevant missingness assumptions are $\text{a) }\mathbb{E}[m_i z_i \epsilon_i] = 0, \text{b) }\mathbb{E}[m_i z_i \xi_i] = 0, \text{c) }\mathbb{E}[m_i x_i \epsilon_i] = 0$.
+The relevant missingness assumptions are $$\text{a) }\mathbb{E}[m_i z_i \epsilon_i] = 0, \text{b) }\mathbb{E}[m_i z_i \xi_i] = 0, \text{c) }\mathbb{E}[m_i x_i \epsilon_i] = 0$$.
 These are central to the identification of the model parameters and the consistency of the GMM estimator.
-The assumption a) is the standard exogeneity assumption of the error term in the regression model \eqref{eq:1}.
+Assumption a) is the standard exogeneity assumption of the error term in the regression model \eqref{eq:1}.
 It describes the absence of correlation between the missingness indicator $m_i$ and the error term $\epsilon_i$ and is required for the consistency of the OLS estimator of $\alpha_0$.
-The assumption b) is the exogeneity of the imputation error term $\xi_i$.
+Assumption b) is on the exogeneity of the imputation error term $\xi_i$.
 It states that the missingness of $x_i$, $m_i$, is uncorrelated with the imputation error term $\xi_i$.
 Facilitating consistent estimation of $\gamma_0$ in the imputation model \eqref{eq:2}.
-The assumption c) is the exogeneity of the missing regressor $x_i$.
+Assumption c) is on the exogeneity of the missing regressor $x_i$.
 It states that the missingness of $x_i$ is uncorrelated with the error term $\epsilon_i$ in the regression model \eqref{eq:1}.
 This assumption is required for the consistency of the OLS estimator of $\beta_0$.
-Hence, under these assumptions about the missingness structure, the model parameters $\alpha_0$ and $\beta_0$ in equation \eqref{eq:3} can under the correctly specified imputation model be consistently estimated by OLS.
+Conceptually, the missingness assumption a)-c) state that both the regression model \eqref{eq:1} and the imputation model \eqref{eq:3} are equivalent for missing and non-missing data.
+Hence, under these assumptions about the missingness structure, the model parameters $\alpha_0$ and $\beta_0$ in Equation \eqref{eq:3} can under the correctly specified imputation model be consistently estimated by OLS.
 
 Recapitulate that the assumptions on the missingness structure are less restrictive than the MCAR assumption, but stronger than the MAR assumption.
 Under MCAR, the missingness of $x_i$, $m_i$, is statistically of all observed variables ($x_i, z_i$) and unobserved variables ($\epsilon_i, \xi_i$).
 This assumption entails the three missingness assumptions a), b), and c) and is thus stronger than the missingness assumptions required for the identification of the model parameters and the consistency of the GMM estimator.
 In contrast to MCAR, the MAR assumption allows the missingness of $x_i$, $m_i$, to depend on the observed variable $z_i$ and the dependent variable $y_i$, but not on the partially missing variable $x_i$.
 This assumption is less restrictive than the missingness assumptions required for the identification of the model parameters and the consistency of the GMM estimator.
+For the complete data method, assumptions a) and c) are sufficient for consistency.
+Highlighting the efficiency gains possible for the GMM estimator over the complete data method through the missingness assumptions and overspecification in the moment conditions.
 
 \subsection{Generalized Method of Moments}
 The GMM is an estimation technique relying on moment conditions derived from the model assumptions, rather than requiring a fully specified likelihood function.
@@ -51,13 +54,65 @@ In the context of the regression model specified above through equations \eqref{
         (1-m_i)z_i (x_i - z_i^{\prime} \gamma) \\
         m_i z_i (y_i - z_i^{\prime} (\gamma \alpha + \beta))
     \end{pmatrix}
+    = \begin{pmatrix}
+        g_{1i}(\alpha, \beta, \gamma) \\
+        g_{2i}(\alpha, \beta, \gamma) \\
+        g_{3i}(\alpha, \beta, \gamma)
+    \end{pmatrix}
 \end{equation}
 and the assumptions on the missing data structure imply that $\mathbb{E}[g_i(\alpha_0, \beta_0, \gamma_0)] = 0$.
 Hence, the number of moment conditions is larger than the dimension of the vector of parameters $(\alpha_0, \beta_0, \gamma_0)$ to estimate, which makes the model overidentified.
+The first moment condition $g_{1i}$ estimates $\theta_0$ for observed $x_i$ based on Equation \eqref{eq:1}.
+The second moment condition $g_{2i}$ stems from the imputation model in Equation \eqref{eq:2}, which has to hold for all $x_i$.
+The third moment condition $g_{3i}$ is the product of the missingness indicator $m_i$ and the imputation model in Equation \eqref{eq:3}, it describes the adequate regression equation for missing values.
+An adapted GMM estimator omitting $g_{2i}$ or $g_{3i}$, is equivalent to the complete data method estimator.
 
 The GMM estimator is then obtained by minimizing the sample analog of the quadratic form of the moment conditions, i.e. the sample analog of the expectation of the moment conditions.
-The GMM estimator is consistent and asymptotically normally distributed under standard regularity conditions.
-The GMM estimator is also robust to misspecification of the imputation model, as long as the moment conditions are correctly specified.
+It is consistent and asymptotically normally distributed under standard regularity conditions and is also robust to misspecification of the imputation model, as long as the moment conditions are correctly specified.
 Further, an overidentification test can be used to test the validity of the moment conditions and the model assumptions.
 
 \subsection{The Dummy Variable Method}
+\label{subsec:methodology-dummy}
+The dummy variable method is a simple and widely used approach to handle missing data.
+The assumptions on the missing data structure due not guarantee consistency of the corresponding estimator, but neither does a stricter assumption like MCAR.
+The method is based on the idea of creating a dummy variable for the missingness of the regressor.
+The dummy variable is then included in the regression model as an additional regressor.
+
+Combining Equations \eqref{eq:1} and \eqref{eq:3} for missing and observed data, we obtain:
+
+\begin{equation}\label{eq:5}
+    y_i = (1-m_i) x_i \alpha_0 + z_i^{\prime} \beta_0 + m_i z_i^{\prime} \gamma_0 \alpha_0 + \epsilon_i + m_i \xi_i \alpha_0.
+\end{equation}
+
+This model contains the information of both the true regression model for observed data $(m_i = 0)$ and the imputation model for missing data $(m_i = 1)$.
+That is, $(1-m_i) x_i \alpha_0$ is the contribution of the true regression model for observed data, $m_i z_i^{\prime} \gamma_0 \alpha_0$ is the contribution of the imputation model for missing data, and
+$\epsilon_i + m_i \xi_i \alpha_0$ is the combined residual of the true regression and imputation models.
+The instruments $z_i^{\prime} \beta_0$ are included in the model, as well.
+It is a valid regression model, since the missingness of $x_i$ is uncorrelated with the combined residual $\epsilon_i + m_i \xi_i \alpha_0$.
+
+Estimating the model in Equation \eqref{eq:5} by OLS yields consistent estimates of the parameters $(\alpha_0, \beta_0)$.
+These are equivalent to the complete data method estimates.
+The efficiency gains from the GMM estimator over the complete data method in this model come from the correct specification of the imputation model also holding on the observed data.
+Rewriting Equation \eqref{eq:5} with $z_i = (1, z_{2i}^{\prime})$ and $\gamma_0 = (\gamma_{10}, \gamma_{20}^{\prime})$ yields:
+
+\begin{equation}\label{eq:6}
+    y_i = (1-m_i) x_i \alpha_0 + z_i^{\prime} \beta_0 + m_i \gamma_{10} \alpha_0 + m_i z_{2i}^{\prime} \gamma_{20} \alpha_0 + \epsilon_i + m_i \xi_i \alpha_0.
+\end{equation}
+
+Since, the dummy variable method does not impose assumptions (especially not assumption a) - c) on the missing data structure), the method performs OLS on the following model:
+
+\begin{equation}\label{eq:7}
+    y_i = (1-m_i) x_i \alpha_0 + z_i^{\prime} \beta_0 + m_i \gamma_{10} \alpha_0 + \epsilon_i + m_i \xi_i \alpha_0
+\end{equation}
+
+where the regressor $m_i z_{2i}^{\prime}$ is omitted, producing an omitted-variable bias.
+\citet{jones1996} shows that the OLS estimators of the parameters $(\alpha_0, \beta_0)$ from the regression model in Equation \eqref{eq:7} are biased and inconsistent, unless either of (a) $\alpha_0 = 0$ or (b) $\gamma_{20} = 0$ holds.
+For condition (a), the regressor $x_i$ is irrelevant in the regression model from Equation \eqref{eq:1}.
+Hence, $x_i$ does not contribute to explaining the variation in $y_i$ and should be simply dropped from the model.
+Since, condition (a) is straightforward, easy to test, and then to apply, it is a simple solution to the omitted-variable bias.
+If the regressor $x_i$ is irrelevant and excluded from the model, there is no need to worry about a method being sensitive to the missing data mechanism.
+
+For condition (b), the instrument $z_{2i}$ is irrelevant in the imputation model from Equation \eqref{eq:2}.
+Hence, $z_{2i}$ does not contribute to explaining the variation in $x_i$, and it becomes irrelevant to include in the imputation model.
+Yet, assuming that the instrument $z_{2i}$ is unable to explain any variation in $x_i$ is a strong assumption, and highly unlikely in practice.
+The following Monte Carlo simulations hence focus on showing the bias and inconsistency of the dummy variable method when the residuals are becoming more complex, i.e. when introducing heteroskedasticity, and when the instrument $z_{2i}$ is becoming more relevant in the imputation model through values of $\gamma_{20} \neq 0$.
