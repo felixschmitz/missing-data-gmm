@@ -21,8 +21,7 @@ GRID_SUBNAMES = [
 
 for GRID_SUBNAME in GRID_SUBNAMES:
 
-    @task(id=GRID_SUBNAME)
-    @pytask.mark.after("task_simulate_grid")
+    @task(id=GRID_SUBNAME, after="task_pdf")
     def task_plot(
         raw_statistics: Annotated[pytask.DataCatalog, DATA_CATALOGS["simulation"]],
         grid_subname: str = GRID_SUBNAME,
@@ -44,6 +43,8 @@ for GRID_SUBNAME in GRID_SUBNAMES:
 def _create_figure(data_catalog: pytask.DataCatalog, s: str) -> go.Figure:
     sorted_keys = _get_sorted_grid_keys(s + "_GRID_")
     data = _merge_results(data_catalog, sorted_keys)
+    if "_imputation" in s:
+        data = data[data["Method"] != "Complete case method"]
     return _format_figure(data)
 
 
@@ -92,7 +93,6 @@ def _format_figure(data: pd.DataFrame) -> go.Figure:
         fig.add_trace(trace, row=1, col=2)
 
     fig.update_layout(
-        legend_title_text=r"$\text{Method}$",
         showlegend=True,
         legend={
             "orientation": "h",
@@ -114,9 +114,8 @@ def _format_figure(data: pd.DataFrame) -> go.Figure:
         mirror=True,
         tickmode="auto",
         title_text=r"$\gamma_{20}$",
-        row=1,
-        col=1,
     )
+
     fig.update_yaxes(
         showline=True,
         linecolor="black",
@@ -124,27 +123,6 @@ def _format_figure(data: pd.DataFrame) -> go.Figure:
         mirror=True,
         tickmode="auto",
         title_text=r"$MSE$",
-        row=1,
-        col=1,
-    )
-    fig.update_xaxes(
-        showline=True,
-        linecolor="black",
-        tickcolor="black",
-        mirror=True,
-        tickmode="auto",
-        title_text=r"$\gamma_{20}$",
-        row=1,
-        col=2,
-    )
-    fig.update_yaxes(
-        showline=True,
-        linecolor="black",
-        tickcolor="black",
-        mirror=True,
-        tickmode="auto",
-        row=1,
-        col=2,
-        matches="y",
+        range=[0, 0.5],
     )
     return fig
