@@ -74,6 +74,7 @@ for design in MC_DESIGNS:
     @task(id=str(design))
     def task_simulate_designs(
         params: Annotated[dict, params],
+        design: Annotated[int, design],  # noqa: ARG001
     ) -> Annotated[pd.DataFrame, DATA_CATALOGS["simulation"][f"MC_RESULTS_{design}"]]:
         """Run Monte Carlo simulation for different methods.
 

@@ -6,7 +6,7 @@ import pandas as pd
 from missing_data_gmm.config import METHODS
 
 
-def _get_design_parameters(design: int, k_regressors: int) -> list:  # noqa: C901, PLR0911
+def _get_design_parameters(design: int, k_regressors: int) -> list:
     match design:
         case 1:
             return [
@@ -19,82 +19,19 @@ def _get_design_parameters(design: int, k_regressors: int) -> list:  # noqa: C90
             ]
         case 2:
             return [
-                np.array([0.1]),
+                np.array([1]),
                 np.array([1] * (k_regressors - 1)),
-                np.array([10, 0]),
+                np.array([1, 1]),
                 np.array([1] * (k_regressors - 1)),
-                np.array([10, 0, 0]),
+                np.array([1, 0, 1]),
                 False,
             ]
         case 3:
             return [
                 np.array([1]),
                 np.array([1] * (k_regressors - 1)),
-                np.array([10, 0]),
-                np.array([1] * (k_regressors - 1)),
-                np.array([1, 0, 0]),
-                False,
-            ]
-        case 4:
-            return [
-                np.array([1]),
-                np.array([1] * (k_regressors - 1)),
                 np.array([1, 1]),
                 np.array([1] * (k_regressors - 1)),
-                np.array([1, 0, 1]),
-                False,
-            ]
-        case 5:
-            return [
-                np.array([1]),
-                np.array([1] * (k_regressors - 1)),
-                np.array([1, 1]),
-                np.array([1] * (k_regressors - 1)),
-                np.array([1, 1, 1]),
-                False,
-            ]
-        case 6:
-            return [
-                np.array([1]),
-                np.array([1] * (k_regressors - 1)),
-                np.array([1, 0]),
-                np.array([1] * (k_regressors - 1)),
-                np.array([1, 0, 0]),
-                False,
-            ]
-        case 7:
-            return [
-                np.array([1]),
-                np.array([1] * (k_regressors - 1)),
-                np.array([1, 1]),
-                np.array([1] * (k_regressors - 1)),
-                np.array([1, 0, 1]),
-                False,
-            ]
-        case 8:
-            return [
-                np.array([1]),
-                np.array([1] * (k_regressors - 1)),
-                np.array([0.1, 0.2]),
-                np.array([1] * (k_regressors - 1)),
-                np.array([0.1, 0.2, 0.1]),
-                True,
-            ]
-        case 9:
-            return [
-                np.array([0.1]),
-                np.array([1] * (k_regressors - 1)),
-                np.array([1, 1]),
-                np.array([1] * (k_regressors - 1)),
-                np.array([1, 1, 1]),
-                False,
-            ]
-        case 10:
-            return [
-                np.array([1]),
-                np.array([1] * (k_regressors - 1)),
-                np.array([1, 1]),
-                np.array([1, 0.1]),
                 np.array([1, 1, 1]),
                 False,
             ]

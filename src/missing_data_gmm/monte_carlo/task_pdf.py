@@ -94,8 +94,8 @@ ERROR_STRUCTURE = {
     },
 }
 
-for error_name, (deltas, thetas) in ERROR_STRUCTURE.items():
-    GRID_PARAMS = _generate_grid_params(deltas, thetas)
+for error_name, error_params in ERROR_STRUCTURE.items():
+    GRID_PARAMS = _generate_grid_params(error_params["deltas"], error_params["thetas"])
 
     for grid_id, params in GRID_PARAMS.items():
 

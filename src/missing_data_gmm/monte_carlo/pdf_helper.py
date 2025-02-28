@@ -18,7 +18,7 @@ def initialize_params(
     """
     params = {}
     params["design"] = 1
-    params["methods"] = ["Dummy case method", "GMM"]
+    params["methods"] = ["Dummy case method", "GMM", "Complete case method"]
     params["n_observations"] = 400  # Number of observations
     params["k_regressors"] = 3  # Number of regressors (including intercept)
     params["lambda_"] = 0.5  # Proportion of observations with missing data
